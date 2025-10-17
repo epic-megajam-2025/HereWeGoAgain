@@ -3,15 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Characters/HWGABaseCharacter.h"
 #include "Cat.generated.h"
 
+class UMovementAttributeSet;
+
 UCLASS()
-class HEREWEGOAGAIN_API ACat : public ACharacter
+class HEREWEGOAGAIN_API ACat : public AHWGABaseCharacter
 {
 	GENERATED_BODY()
-
-public:
-	// Sets default values for this character's properties
-	ACat();
 };

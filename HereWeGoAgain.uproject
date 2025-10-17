@@ -25,10 +25,14 @@
 		},
 		{
 			"Name": "StateTree",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "GameplayStateTree",
+			"Enabled": false
+		},
+		{
+			"Name": "GameplayAbilities",
 			"Enabled": true
 		}
 	]
