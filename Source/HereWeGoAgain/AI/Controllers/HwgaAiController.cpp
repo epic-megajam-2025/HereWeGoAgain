@@ -4,6 +4,7 @@
 #include "HwgaAiController.h"
 
 #include "AbilitySystemInterface.h"
+#include "AI/Components/HwgaAiPerceptionComponent.h"
 #include "AI/Components/HwgaBehaviorTreeComponent.h"
 #include "AI/Components/NpcComponent.h"
 #include "AI/Components/NpcStatesComponent.h"
@@ -17,6 +18,7 @@ AHwgaAiController::AHwgaAiController(const FObjectInitializer& ObjectInitializer
 	NpcStatesComponent = CreateDefaultSubobject<UNpcStatesComponent>(TEXT("NpcStatesComponent"));
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 	BrainComponent = CreateDefaultSubobject<UHwgaBehaviorTreeComponent>(TEXT("BrainComponent"));
+	PerceptionComponent = CreateDefaultSubobject<UHwgaAiPerceptionComponent>(TEXT("Perception"));
 }
 
 void AHwgaAiController::OnPossess(APawn* InPawn)
