@@ -15,13 +15,13 @@ public class HereWeGoAgain : ModuleRules
 			"InputCore",
 			"EnhancedInput",
 			"AIModule",
-			"StateTreeModule",
-			"GameplayStateTreeModule",
+			"NavigationSystem",
 			"UMG",
 			"Slate",
 			"GameplayAbilities",
 			"GameplayTasks",
-			"GameplayTags"
+			"GameplayTags",
+			"Gestures"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

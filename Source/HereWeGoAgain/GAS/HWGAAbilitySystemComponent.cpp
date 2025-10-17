@@ -3,7 +3,7 @@
 
 #include "HWGAAbilitySystemComponent.h"
 
-#include "AI/Characters/Cat.h"
+#include "AI/Characters/Npc.h"
 #include "Attributes/MovementAttributeSet.h"
 #include "Components/HWGACharacterMovementComponent.h"
 

@@ -3,16 +3,24 @@
 
 #include "HWGABaseCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "Components/BaseGesturesComponent.h"
 #include "Components/HWGACharacterMovementComponent.h"
+#include "Data/GestureTags.h"
+#include "GAS/GameplayAbilityTargetData_Gesture.h"
 #include "GAS/HWGAAbilitySystemComponent.h"
 #include "GAS/Attributes/MovementAttributeSet.h"
+
+FName AHWGABaseCharacter::AbilitySystemComponentName(TEXT("Ability System Component"));
+FName AHWGABaseCharacter::GesturesComponentName(TEXT("GesturesComponent"));
 
 AHWGABaseCharacter::AHWGABaseCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UHWGACharacterMovementComponent>(CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
-	AbilitySystemComponent = CreateDefaultSubobject<UHWGAAbilitySystemComponent>(TEXT("Ability System Component"));
+	AbilitySystemComponent = CreateDefaultSubobject<UHWGAAbilitySystemComponent>(AbilitySystemComponentName);
 	MovementAttributeSet = CreateDefaultSubobject<UMovementAttributeSet>(TEXT("Movement Attribute Set"));
+	GesturesComponent = CreateDefaultSubobject<UBaseGesturesComponent>(GesturesComponentName);
 }
 
 void AHWGABaseCharacter::BeginPlay()
@@ -24,6 +32,19 @@ void AHWGABaseCharacter::BeginPlay()
 		auto GESpec = AbilitySystemComponent->MakeOutgoingSpec(InitializationGameplayEffect, 1.f, GEContext);
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*GESpec.Data);
 	}
+
+	if (!GrantedAbilities.IsEmpty())
+	{
+		for (const auto& AbilityClassSoftPtr : GrantedAbilities)
+		{
+			if (AbilityClassSoftPtr.IsNull())
+				continue;
+			
+			auto AbilityClass = AbilityClassSoftPtr.LoadSynchronous(); 
+			auto AbilitySpec = AbilitySystemComponent->BuildAbilitySpecFromClass(AbilityClass);
+			AbilitySystemComponent->GiveAbility(AbilitySpec);
+		}
+	}
 }
 
 UMovementAttributeSet* AHWGABaseCharacter::GetMovementAttributeSet() const
@@ -31,7 +52,86 @@ UMovementAttributeSet* AHWGABaseCharacter::GetMovementAttributeSet() const
 	return MovementAttributeSet;
 }
 
+void AHWGABaseCharacter::ChangeGameplayTags(const FGameplayTagContainer& DeltaTags, bool bAppend)
+{
+	if (bAppend)
+		CharacterTags.AppendTags(DeltaTags);
+	else
+		CharacterTags.RemoveTags(DeltaTags);
+}
+
 UAbilitySystemComponent* AHWGABaseCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void AHWGABaseCharacter::GestureStarted()
+{
+}
+
+void AHWGABaseCharacter::GestureFinished(bool bSuccess)
+{
+}
+
+UGesturesDataAsset* AHWGABaseCharacter::GetGestures() const
+{
+	return !GesturesDataAsset.IsNull() ? GesturesDataAsset.LoadSynchronous() : nullptr;
+}
+
+void AHWGABaseCharacter::SetMovementEnabledForGestures(bool bEnabled)
+{
+	// TODO (@red)
+}
+
+void AHWGABaseCharacter::GetGestureCharacterActiveTags(FGameplayTagContainer& OutTags) const
+{
+	OutTags.AppendTags(CharacterTags);
+	OutTags.AppendTags(AbilitySystemComponent->GetOwnedGameplayTags());
+}
+
+void AHWGABaseCharacter::SetRightHandGesturePositioning(const FVector& RightHandWorldLocation)
+{
+}
+
+void AHWGABaseCharacter::SetLeftHandGesturePositioning(const FVector& LeftHandWorldLocation)
+{
+}
+
+void AHWGABaseCharacter::ResetRightHandGesturePositioning()
+{
+}
+
+void AHWGABaseCharacter::ResetLeftHandGesturePositioning()
+{
+}
+
+bool AHWGABaseCharacter::IsGameLoading_Gesture() const
+{
+	return false;
+}
+
+void AHWGABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer.AppendTags(CharacterTags);
+	TagContainer.AppendTags(AbilitySystemComponent->GetOwnedGameplayTags());
+}
+
+bool AHWGABaseCharacter::Gesture(const FGameplayTag& GestureTag)
+{
+	if (!GestureTag.IsValid())
+		return false;
+	
+	FGameplayEventData Payload;
+	FGameplayAbilityTargetData_Gesture* TargetData = new FGameplayAbilityTargetData_Gesture();
+	TargetData->GestureTag = GestureTag;
+	Payload.TargetData.Add(TargetData);
+	Payload.Instigator = this;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, GestureGameplayTags::Gesture_Ability_Gesture_Event_Activate, Payload);
+	return true;
+}
+
+void AHWGABaseCharacter::StopGesture()
+{
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, GestureGameplayTags::Gesture_Ability_Gesture_Event_Abort, FGameplayEventData());
 }

@@ -4,14 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagAssetInterface.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/GestureCharacter.h"
 #include "HWGABaseCharacter.generated.h"
 
+class UBaseGesturesComponent;
+class UGameplayAbility;
 class UGameplayEffect;
 class UMovementAttributeSet;
 
 UCLASS()
-class HEREWEGOAGAIN_API AHWGABaseCharacter : public ACharacter, public IAbilitySystemInterface
+class HEREWEGOAGAIN_API AHWGABaseCharacter : public ACharacter, public IAbilitySystemInterface, public IGestureCharacter, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -25,12 +29,47 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UHWGAAbilitySystemComponent* AbilitySystemComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBaseGesturesComponent* GesturesComponent;
+	
 	UPROPERTY()
 	UMovementAttributeSet* MovementAttributeSet;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> InitializationGameplayEffect;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<TSoftClassPtr<UGameplayAbility>> GrantedAbilities;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UGesturesDataAsset> GesturesDataAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTagContainer CharacterTags;
+
+protected:
+	static FName AbilitySystemComponentName;
+	static FName GesturesComponentName;
+
+	void ChangeGameplayTags(const FGameplayTagContainer& DeltaTags, bool bAppend);
+	bool Gesture(const FGameplayTag& GestureTag);
+	void StopGesture();
+	
 public: // IAbilitySystemInterface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+public: // IGestureCharacter
+	virtual void GestureStarted() override;
+	virtual void GestureFinished(bool bSuccess) override;
+	virtual UGesturesDataAsset* GetGestures() const override;
+	virtual void SetMovementEnabledForGestures(bool bEnabled) override;
+	virtual void GetGestureCharacterActiveTags(FGameplayTagContainer& OutTags) const override;
+	virtual void SetRightHandGesturePositioning(const FVector& RightHandWorldLocation) override;
+	virtual void SetLeftHandGesturePositioning(const FVector& LeftHandWorldLocation) override;
+	virtual void ResetRightHandGesturePositioning() override;
+	virtual void ResetLeftHandGesturePositioning() override;
+	virtual bool IsGameLoading_Gesture() const override;
+
+public: // IGameplayTagAssetInterface
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 };

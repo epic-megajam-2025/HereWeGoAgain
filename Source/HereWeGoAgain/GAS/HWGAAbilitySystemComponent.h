@@ -22,10 +22,10 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	
+	TWeakObjectPtr<AHWGABaseCharacter> CharacterOwner;
 
 private:
 	void OnMoveSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	void OnTurnRateChanged(const FOnAttributeChangeData& OnAttributeChangeData);
-	
-	TWeakObjectPtr<AHWGABaseCharacter> CharacterOwner;
 };
