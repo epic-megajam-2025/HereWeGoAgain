@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "HereWeGoAgainCharacter.h"
+#include "HWGAPlayerCharacter.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -9,8 +9,9 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "HereWeGoAgain.h"
+#include "Components/LaserPointerComponent.h"
 
-AHereWeGoAgainCharacter::AHereWeGoAgainCharacter()
+AHWGAPlayerCharacter::AHWGAPlayerCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
@@ -42,23 +43,28 @@ AHereWeGoAgainCharacter::AHereWeGoAgainCharacter()
 	// Configure character movement
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 	GetCharacterMovement()->AirControl = 0.5f;
+
+	LaserPointerComponent = CreateDefaultSubobject<ULaserPointerComponent>(TEXT("LaserPointer"));
 }
 
-void AHereWeGoAgainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AHWGAPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {	
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AHereWeGoAgainCharacter::DoJumpStart);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AHereWeGoAgainCharacter::DoJumpEnd);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AHWGAPlayerCharacter::DoJumpStart);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AHWGAPlayerCharacter::DoJumpEnd);
 
+		EnhancedInputComponent->BindAction(PointLaserAction, ETriggerEvent::Started, this, &AHWGAPlayerCharacter::StartPointingLaser);
+		EnhancedInputComponent->BindAction(PointLaserAction, ETriggerEvent::Completed, this, &AHWGAPlayerCharacter::StopPointingLaser);
+		
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AHereWeGoAgainCharacter::MoveInput);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AHWGAPlayerCharacter::MoveInput);
 
 		// Looking/Aiming
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHereWeGoAgainCharacter::LookInput);
-		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AHereWeGoAgainCharacter::LookInput);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHWGAPlayerCharacter::LookInput);
+		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AHWGAPlayerCharacter::LookInput);
 	}
 	else
 	{
@@ -66,8 +72,7 @@ void AHereWeGoAgainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	}
 }
 
-
-void AHereWeGoAgainCharacter::MoveInput(const FInputActionValue& Value)
+void AHWGAPlayerCharacter::MoveInput(const FInputActionValue& Value)
 {
 	// get the Vector2D move axis
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -77,7 +82,7 @@ void AHereWeGoAgainCharacter::MoveInput(const FInputActionValue& Value)
 
 }
 
-void AHereWeGoAgainCharacter::LookInput(const FInputActionValue& Value)
+void AHWGAPlayerCharacter::LookInput(const FInputActionValue& Value)
 {
 	// get the Vector2D look axis
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -87,7 +92,7 @@ void AHereWeGoAgainCharacter::LookInput(const FInputActionValue& Value)
 
 }
 
-void AHereWeGoAgainCharacter::DoAim(float Yaw, float Pitch)
+void AHWGAPlayerCharacter::DoAim(float Yaw, float Pitch)
 {
 	if (GetController())
 	{
@@ -97,7 +102,7 @@ void AHereWeGoAgainCharacter::DoAim(float Yaw, float Pitch)
 	}
 }
 
-void AHereWeGoAgainCharacter::DoMove(float Right, float Forward)
+void AHWGAPlayerCharacter::DoMove(float Right, float Forward)
 {
 	if (GetController())
 	{
@@ -107,14 +112,24 @@ void AHereWeGoAgainCharacter::DoMove(float Right, float Forward)
 	}
 }
 
-void AHereWeGoAgainCharacter::DoJumpStart()
+void AHWGAPlayerCharacter::DoJumpStart()
 {
 	// pass Jump to the character
 	Jump();
 }
 
-void AHereWeGoAgainCharacter::DoJumpEnd()
+void AHWGAPlayerCharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+
+void AHWGAPlayerCharacter::StartPointingLaser()
+{
+	LaserPointerComponent->SetLaserPointerActive(true);
+}
+
+void AHWGAPlayerCharacter::StopPointingLaser()
+{
+	LaserPointerComponent->SetLaserPointerActive(false);
 }

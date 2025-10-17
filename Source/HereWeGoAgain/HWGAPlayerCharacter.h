@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "HereWeGoAgainCharacter.generated.h"
+#include "HWGAPlayerCharacter.generated.h"
 
+class ULaserPointerComponent;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
@@ -18,8 +19,8 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 /**
  *  A basic first person character
  */
-UCLASS(abstract)
-class AHereWeGoAgainCharacter : public ACharacter
+UCLASS(Blueprintable)
+class AHWGAPlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -30,6 +31,9 @@ class AHereWeGoAgainCharacter : public ACharacter
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	ULaserPointerComponent* LaserPointerComponent;
 
 protected:
 
@@ -48,9 +52,13 @@ protected:
 	/** Mouse Look Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	class UInputAction* MouseLookAction;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, Category ="Input")
+	class UInputAction* PointLaserAction;
 	
 public:
-	AHereWeGoAgainCharacter();
+	AHWGAPlayerCharacter();
 
 protected:
 
@@ -75,12 +83,9 @@ protected:
 	/** Handles jump end inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
-
-protected:
-
+	
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
-	
 
 public:
 
@@ -90,5 +95,8 @@ public:
 	/** Returns first person camera component **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+private:
+	void StartPointingLaser();
+	void StopPointingLaser();
 };
 

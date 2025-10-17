@@ -25,12 +25,6 @@ public class HereWeGoAgain : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"HereWeGoAgain",
-			"HereWeGoAgain/Variant_Horror",
-			"HereWeGoAgain/Variant_Horror/UI",
-			"HereWeGoAgain/Variant_Shooter",
-			"HereWeGoAgain/Variant_Shooter/AI",
-			"HereWeGoAgain/Variant_Shooter/UI",
-			"HereWeGoAgain/Variant_Shooter/Weapons"
 		});
 
 		// Uncomment if you are using Slate UI
