@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayEffectTypes.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "HWGACharacterMovementComponent.generated.h"
 
@@ -16,4 +15,11 @@ class HEREWEGOAGAIN_API UHWGACharacterMovementComponent : public UCharacterMovem
 public:
 	void SetWalkSpeed(float NewValue);
 	void SetTurnRate(float NewValue);
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float IncreaseDragAtMoveSpeedThreshold = 450.f;
+
+private:
+	bool bIncreasedDrag = false;
 };

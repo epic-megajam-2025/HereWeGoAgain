@@ -35,6 +35,9 @@ void UHwgaAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	MoveDirectionYaw = FMath::RadiansToDegrees(FMath::Acos(AccelerationDirection2D | ControlledCharacter->GetActorForwardVector()));
 	if ((AccelerationDirection2D | ControlledCharacter->GetActorRightVector()) < 0.f)
 		MoveDirectionYaw *= -1.f;
+
+	if (FocusActor.IsValid())
+		FocusPoint = FocusActor->GetActorLocation();
 }
 
 void UHwgaAnimInstance::SetFocusPoint(const FVector& NewFocusPoint)
@@ -42,7 +45,13 @@ void UHwgaAnimInstance::SetFocusPoint(const FVector& NewFocusPoint)
 	FocusPoint = NewFocusPoint;
 }
 
-void UHwgaAnimInstance::ResetFocusPoint()
+void UHwgaAnimInstance::SetFocusActor(const AActor* NewFocusActor)
+{
+	FocusActor = NewFocusActor;
+}
+
+void UHwgaAnimInstance::ClearFocusPoint()
 {
 	FocusPoint = FVector::ZeroVector;
+	FocusActor.Reset();
 }

@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "BrainComponent.h"
+#include "AI/Controllers/HwgaAiController.h"
 #include "AI/Data/AiDataTypes.h"
 #include "AI/Data/AIGameplayTags.h"
 #include "AI/Data/HWGAGameplayTags.h"
@@ -23,4 +24,14 @@ void UNpcAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpecH
 	
 	AIMessage.SetFlag(AI_BRAINMESSAGE_FLAG_IMMEDIATE);
 	AIController->GetBrainComponent()->HandleMessage(AIMessage);
+}
+
+void UNpcAbilitySystemComponent::OnMoveSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	Super::OnMoveSpeedChanged(OnAttributeChangeData);
+	if (auto AIController = Cast<AHwgaAiController>(CharacterOwner->GetController()))
+	{
+		AIController->OnMoveSpeedChanged(OnAttributeChangeData.NewValue);
+	}
+	
 }

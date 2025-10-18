@@ -22,4 +22,6 @@ namespace AIGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(AI_SetByCaller_UpdateSpeedToBeAtLocationMMC_Time, "AI.SetByCaller.UpdateSpeedToBeAtLocationMMC.Time", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(AI_SetByCaller_UpdateSpeedToBeAtLocationMMC_MinSpeed, "AI.SetByCaller.UpdateSpeedToBeAtLocationMMC.MinSpeed", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(AI_SetByCaller_UpdateSpeedToBeAtLocationMMC_MaxSpeed, "AI.SetByCaller.UpdateSpeedToBeAtLocationMMC.MaxSpeed", "");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(AI_State_Focused, "AI.State.Focused", "");
 }

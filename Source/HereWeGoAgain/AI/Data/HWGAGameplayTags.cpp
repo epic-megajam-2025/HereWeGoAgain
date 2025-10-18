@@ -4,4 +4,6 @@
 namespace HWGAGameplayTags
 {
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(System_Ability_ActivationFailed_CantAffordCost, "HWGA.System.Ability.ActivationFailed.CantAffordCost", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Location_Game_Start, "HWGA.Location.Game.Start", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Location_Game_End, "HWGA.Location.Game.End", "");
 }

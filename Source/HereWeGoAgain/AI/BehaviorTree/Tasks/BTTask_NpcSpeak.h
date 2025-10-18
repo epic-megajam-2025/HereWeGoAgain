@@ -20,7 +20,7 @@ public:
 	virtual FString GetStaticDescription() const override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(Categories="AI.Noise,AI.Speech"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayTag AISoundTag;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

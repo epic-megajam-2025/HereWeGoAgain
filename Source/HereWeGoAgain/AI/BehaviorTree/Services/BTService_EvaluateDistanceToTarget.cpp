@@ -171,7 +171,7 @@ void UBTService_EvaluateDistanceToTarget::OnBecomeRelevant(UBehaviorTreeComponen
 		Blackboard->SetValueAsFloat(OutDistanceBBKey.SelectedKeyName, Distance);
 	}
 
-	BTMemory->NpcCombatLogicComponent = OwnerComp.GetAIOwner()->GetPawn()->FindComponentByClass<UNpcComponent>();
+	BTMemory->NpcCombatLogicComponent = OwnerComp.GetAIOwner()->FindComponentByClass<UNpcComponent>();
 }
 
 void UBTService_EvaluateDistanceToTarget::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

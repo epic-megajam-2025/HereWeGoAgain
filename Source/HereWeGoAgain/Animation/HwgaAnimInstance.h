@@ -44,9 +44,11 @@ public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	void SetFocusPoint(const FVector& NewFocusPoint);
-	void ResetFocusPoint();
+	void SetFocusActor(const AActor* FocusActor);
+	void ClearFocusPoint();
 	
 private:
 	TWeakObjectPtr<AHWGABaseCharacter> ControlledCharacter;
 	TWeakObjectPtr<UCharacterMovementComponent> CMC;
+	TWeakObjectPtr<const AActor> FocusActor;
 };

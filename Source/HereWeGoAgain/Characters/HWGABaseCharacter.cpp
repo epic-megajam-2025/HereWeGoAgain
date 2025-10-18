@@ -52,12 +52,41 @@ UMovementAttributeSet* AHWGABaseCharacter::GetMovementAttributeSet() const
 	return MovementAttributeSet;
 }
 
+void AHWGABaseCharacter::AddGameplayTag(const FGameplayTag& Tag, bool bUnique)
+{
+	if (bUnique && CharacterTags.HasTag(Tag))
+		return;
+
+	ChangeGameplayTags(Tag.GetSingleTagContainer(), true);
+}
+
+void AHWGABaseCharacter::RemoveGameplayTag(const FGameplayTag& Tag)
+{
+	ChangeGameplayTags(Tag.GetSingleTagContainer(), false);
+}
+
+void AHWGABaseCharacter::OnGameplayTagsChanged_Implementation()
+{
+	bool bRequireStrafing = StrafeWhenCharacterInState.Matches(CharacterTags);
+	SetStrafing(bRequireStrafing);
+}
+
+void AHWGABaseCharacter::SetStrafing_Implementation(bool bRequireStrafing)
+{
+	auto CMC = GetCharacterMovement();
+	CMC->bOrientRotationToMovement = !bRequireStrafing;
+	// CMC->bUseControllerDesiredRotation = bRequireStrafing;
+	bUseControllerRotationYaw = bRequireStrafing;
+}
+
 void AHWGABaseCharacter::ChangeGameplayTags(const FGameplayTagContainer& DeltaTags, bool bAppend)
 {
 	if (bAppend)
 		CharacterTags.AppendTags(DeltaTags);
 	else
 		CharacterTags.RemoveTags(DeltaTags);
+
+	OnGameplayTagsChanged();
 }
 
 UAbilitySystemComponent* AHWGABaseCharacter::GetAbilitySystemComponent() const

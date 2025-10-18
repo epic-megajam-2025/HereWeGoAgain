@@ -23,6 +23,12 @@ public:
 	AHWGABaseCharacter(const FObjectInitializer& ObjectInitializer);
 	UMovementAttributeSet* GetMovementAttributeSet() const;
 
+	UFUNCTION(BlueprintCallable)
+	void AddGameplayTag(const FGameplayTag& Tag, bool bUnique);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveGameplayTag(const FGameplayTag& Tag);
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -47,10 +53,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayTagContainer CharacterTags;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTagQuery StrafeWhenCharacterInState;
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void OnGameplayTagsChanged();
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void SetStrafing(bool bRequireStrafing);
+	
 protected:
 	static FName AbilitySystemComponentName;
 	static FName GesturesComponentName;
-
+	
 	void ChangeGameplayTags(const FGameplayTagContainer& DeltaTags, bool bAppend);
 	bool Gesture(const FGameplayTag& GestureTag);
 	void StopGesture();
