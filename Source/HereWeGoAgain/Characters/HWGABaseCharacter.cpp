@@ -65,6 +65,43 @@ void AHWGABaseCharacter::RemoveGameplayTag(const FGameplayTag& Tag)
 	ChangeGameplayTags(Tag.GetSingleTagContainer(), false);
 }
 
+void AHWGABaseCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTime)
+{
+	// deliberately not using Super:: logic, because it doesn't have interpolation
+	// Super::FaceRotation(NewControlRotation, DeltaTime);
+
+	// Only if we actually are going to use any component of rotation.
+	if (bUseControllerRotationPitch || bUseControllerRotationYaw || bUseControllerRotationRoll)
+	{
+		const FRotator CurrentRotation = GetActorRotation();
+
+		if (!bUseControllerRotationPitch)
+		{
+			NewControlRotation.Pitch = CurrentRotation.Pitch;
+		}
+
+		if (!bUseControllerRotationYaw)
+		{
+			NewControlRotation.Yaw = CurrentRotation.Yaw;
+		}
+
+		if (!bUseControllerRotationRoll)
+		{
+			NewControlRotation.Roll = CurrentRotation.Roll;
+		}
+
+#if ENABLE_NAN_DIAGNOSTIC
+		if (NewControlRotation.ContainsNaN())
+		{
+			logOrEnsureNanError(TEXT("APawn::FaceRotation about to apply NaN-containing rotation to actor! New:(%s), Current:(%s)"), *NewControlRotation.ToString(), *CurrentRotation.ToString());
+		}
+#endif
+
+		auto InterpolatedRotation = FMath::RInterpTo(CurrentRotation, NewControlRotation, DeltaTime, RotateToInterpolationRate * GetCharacterMovement()->RotationRate.Yaw);
+		SetActorRotation(InterpolatedRotation);
+	}
+}
+
 void AHWGABaseCharacter::OnGameplayTagsChanged_Implementation()
 {
 	bool bRequireStrafing = StrafeWhenCharacterInState.Matches(CharacterTags);
