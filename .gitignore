@@ -75,3 +75,6 @@ Plugins/**/Intermediate/*
 DerivedDataCache/*
 .idea/**
 *.user
+Source/HereWeGoAgain/AI/BehaviorTree/Services/BTService_MultiFocus.cpp
+Source/HereWeGoAgain/AI/BehaviorTree/Services/BTService_MultiFocus.h
+Content/HereWeGoAgain/Actors/BP_WorldLocation_CatBase.uasset
