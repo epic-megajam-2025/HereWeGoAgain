@@ -29,6 +29,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveGameplayTag(const FGameplayTag& Tag);
 
+	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0) override;
+	
 protected:
 	virtual void BeginPlay() override;
 	
@@ -55,6 +57,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayTagQuery StrafeWhenCharacterInState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float RotateToInterpolationRate = 0.15f;
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnGameplayTagsChanged();
