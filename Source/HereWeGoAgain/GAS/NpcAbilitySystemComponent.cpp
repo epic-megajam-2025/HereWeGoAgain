@@ -25,13 +25,3 @@ void UNpcAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpecH
 	AIMessage.SetFlag(AI_BRAINMESSAGE_FLAG_IMMEDIATE);
 	AIController->GetBrainComponent()->HandleMessage(AIMessage);
 }
-
-void UNpcAbilitySystemComponent::OnMoveSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData)
-{
-	Super::OnMoveSpeedChanged(OnAttributeChangeData);
-	if (auto AIController = Cast<AHwgaAiController>(CharacterOwner->GetController()))
-	{
-		AIController->OnMoveSpeedChanged(OnAttributeChangeData.NewValue);
-	}
-	
-}

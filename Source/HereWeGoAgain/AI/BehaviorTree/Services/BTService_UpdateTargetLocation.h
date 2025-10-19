@@ -30,4 +30,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FBlackboardKeySelector OutTargetLocationBBKey;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bClearLocationOnTargetLost = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bClearLocationOnCeaseRelevant = false;
 };

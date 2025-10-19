@@ -22,16 +22,17 @@ void UBTService_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp
 	auto Blackboard = OwnerComp.GetBlackboardComponent();
 	auto Target = Cast<AActor>(Blackboard->GetValueAsObject(TargetBBKey.SelectedKeyName));
 	auto NpcComponent = OwnerComp.GetAIOwner()->FindComponentByClass<UNpcComponent>();
-	if (!Target)
+	bool bCanSeeTarget = Blackboard->GetValueAsBool(CanSeeTargetBBKey.SelectedKeyName);
+	if (!Target || !bCanSeeTarget)
 	{
-		Blackboard->ClearValue(OutTargetLocationBBKey.SelectedKeyName);
-		NpcComponent->ClearTargetLocation();
+		if (bClearLocationOnTargetLost)
+		{
+			Blackboard->ClearValue(OutTargetLocationBBKey.SelectedKeyName);
+			NpcComponent->ClearTargetLocation();
+		}
+		
 		return;
 	}
-
-	bool bCanSeeTarget = Blackboard->GetValueAsBool(CanSeeTargetBBKey.SelectedKeyName);
-	if (!bCanSeeTarget)
-		return;
 
 	NpcComponent->SetTargetLocation(Target->GetActorLocation());
 	Blackboard->SetValueAsVector(OutTargetLocationBBKey.SelectedKeyName, Target->GetActorLocation());
@@ -46,9 +47,15 @@ FString UBTService_UpdateTargetLocation::GetStaticDescription() const
 
 void UBTService_UpdateTargetLocation::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (auto AIController = OwnerComp.GetAIOwner())
-		if (auto NpcComponent = AIController->FindComponentByClass<UNpcComponent>())
-			NpcComponent->ClearTargetLocation();
-			
+	if (bClearLocationOnCeaseRelevant)
+	{
+		if (auto AIController = OwnerComp.GetAIOwner())
+			if (auto NpcComponent = AIController->FindComponentByClass<UNpcComponent>())
+				NpcComponent->ClearTargetLocation();
+
+		if (auto Blackboard = OwnerComp.GetBlackboardComponent())
+			Blackboard->ClearValue(OutTargetLocationBBKey.SelectedKeyName);
+	}
+	
 	Super::OnCeaseRelevant(OwnerComp, NodeMemory);
 }

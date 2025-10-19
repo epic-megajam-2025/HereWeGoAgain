@@ -14,5 +14,4 @@ class HEREWEGOAGAIN_API UNpcAbilitySystemComponent : public UHWGAAbilitySystemCo
 
 protected:
 	virtual void NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason) override;
-	virtual void OnMoveSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData) override;
 };

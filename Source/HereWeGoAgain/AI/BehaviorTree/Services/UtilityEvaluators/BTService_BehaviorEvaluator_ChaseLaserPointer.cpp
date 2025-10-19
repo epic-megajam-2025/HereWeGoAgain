@@ -64,10 +64,24 @@ float UBTService_BehaviorEvaluator_ChaseLaserPointer::UpdatePerception(UBehavior
 		}
 	}
 
+	auto Blackboard = OwnerComp.GetBlackboardComponent();
 	if (CurrentLaserPointer == nullptr)
 	{
-		UE_VLOG(OwnerComp.GetAIOwner(), LogAIUtility_ChaseLaser, Verbose, TEXT("No laser pointer"));
+		if (ChaseBTMemory->CurrentlyTrackedLaserPointer.IsValid())
+		{
+			UE_VLOG(OwnerComp.GetAIOwner(), LogAIUtility_ChaseLaser, Verbose, TEXT("Lost laser pointer"));
+			UE_VLOG_LOCATION(OwnerComp.GetAIOwner(), LogAIUtility_ChaseLaser, Verbose,
+				ChaseBTMemory->CurrentlyTrackedLaserPointer->GetActorLocation(), 12.f, FColor::Black, TEXT("Lost laser pointer"));
+		}
+		else
+		{
+			UE_VLOG(OwnerComp.GetAIOwner(), LogAIUtility_ChaseLaser, Verbose, TEXT("No laser pointer"));
+		}
+		
 		ChaseBTMemory->Clear();
+		if (ChaseBTMemory->bActive)
+			Blackboard->ClearValue(OutTargetBBKey.SelectedKeyName);
+		
 		return RegressionOffset;
 	}
 
@@ -109,7 +123,6 @@ float UBTService_BehaviorEvaluator_ChaseLaserPointer::UpdatePerception(UBehavior
 	
 	if (BTMemory->bActive)
 	{
-		auto Blackboard = OwnerComp.GetBlackboardComponent();
 		if (Blackboard->GetValueAsObject(OutTargetBBKey.SelectedKeyName) != CurrentLaserPointer)
 			Blackboard->SetValueAsObject(OutTargetBBKey.SelectedKeyName, CurrentLaserPointer);
 

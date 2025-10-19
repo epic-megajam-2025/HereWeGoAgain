@@ -35,17 +35,8 @@ bool UBTService_CanSeeActor::CanSee(UBehaviorTreeComponent& OwnerComp) const
 
 	auto SightSenseId = UAISense::GetSenseID(UAISense_Sight::StaticClass());
 	for (const auto& Stimuli : ActorPerceptionInfo.LastSensedStimuli)
-	{
 		if (Stimuli.Type == SightSenseId)
-		{
-			if (Stimuli.IsActive())
-			{
-				ensure(!Stimuli.IsExpired());
-			}
-			
 			return Stimuli.IsActive();// && !Stimuli.IsExpired(); // IsExpired check might be redundant
-		}
-	}
 
 	return false;
 }

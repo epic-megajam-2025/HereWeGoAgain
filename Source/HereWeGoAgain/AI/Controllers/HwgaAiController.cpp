@@ -70,8 +70,6 @@ void AHwgaAiController::OnPossess(APawn* InPawn)
 			NpcBehaviorEvaluatorComponent->RequestEvaluatorsActive(InitiallyActiveBehaviorEvaluators, true);
 		});
 	}
-
-	OnMoveSpeedChanged(PossessedCharacter->GetCharacterMovement()->MaxWalkSpeed);
 }
 
 void AHwgaAiController::SetFocus(AActor* NewFocus, EAIFocusPriority::Type InPriority)
@@ -114,13 +112,4 @@ void AHwgaAiController::ClearFocus(EAIFocusPriority::Type InPriority)
 				HwgaAnimInstance->ClearFocusPoint();
 		}
 	}
-}
-
-void AHwgaAiController::OnMoveSpeedChanged(float NewValue)
-{
-	if (BlackboardKeys == nullptr || BlackboardKeys->MoveSpeedBBKey.SelectedKeyName.IsNone())
-		return;
-	
-	if (auto BlackboardComponent = GetBlackboardComponent())
-		BlackboardComponent->SetValueAsFloat(BlackboardKeys->MoveSpeedBBKey.SelectedKeyName, NewValue);
 }

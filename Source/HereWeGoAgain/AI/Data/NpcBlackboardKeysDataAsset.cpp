@@ -19,10 +19,6 @@ UNpcBlackboardKeysDataAsset::UNpcBlackboardKeysDataAsset()
 	EndLocationBBKey.AllowNoneAsValue(true);
 	EndLocationBBKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UNpcBlackboardKeysDataAsset, EndLocationBBKey));
 
-	MoveSpeedBBKey.AllowNoneAsValue(true);
-	MoveSpeedBBKey.AddFloatFilter(this, GET_MEMBER_NAME_CHECKED(UNpcBlackboardKeysDataAsset, MoveSpeedBBKey));
-
 	ActiveBehaviorEvaluatorsTagsBBKey.AllowNoneAsValue(true);
 	ActiveBehaviorEvaluatorsTagsBBKey.AllowedTypes.Add(NewObject<UBlackboardKeyType_GameplayTag>(this, GET_MEMBER_NAME_CHECKED(UNpcBlackboardKeysDataAsset, ActiveBehaviorEvaluatorsTagsBBKey)));
-
 }

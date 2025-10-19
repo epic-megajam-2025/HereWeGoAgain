@@ -30,8 +30,5 @@ public:
 	FBlackboardKeySelector EndLocationBBKey;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FBlackboardKeySelector MoveSpeedBBKey;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FBlackboardKeySelector ActiveBehaviorEvaluatorsTagsBBKey;
 };

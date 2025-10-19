@@ -24,8 +24,6 @@ public:
 	virtual void SetFocalPoint(FVector NewFocus, EAIFocusPriority::Type InPriority = EAIFocusPriority::Gameplay) override;
 	virtual void ClearFocus(EAIFocusPriority::Type InPriority) override;
 	
-	void OnMoveSpeedChanged(float NewValue);
-
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	
