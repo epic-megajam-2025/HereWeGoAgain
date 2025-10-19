@@ -3,6 +3,7 @@
 
 #include "NpcBlackboardKeysDataAsset.h"
 
+#include "BlackboardKeyType_GameplayTag.h"
 #include "BehaviorTree/BlackboardData.h"
 
 UBlackboardData* UNpcBlackboardKeysDataAsset::GetBlackboardAsset() const
@@ -20,4 +21,8 @@ UNpcBlackboardKeysDataAsset::UNpcBlackboardKeysDataAsset()
 
 	MoveSpeedBBKey.AllowNoneAsValue(true);
 	MoveSpeedBBKey.AddFloatFilter(this, GET_MEMBER_NAME_CHECKED(UNpcBlackboardKeysDataAsset, MoveSpeedBBKey));
+
+	ActiveBehaviorEvaluatorsTagsBBKey.AllowNoneAsValue(true);
+	ActiveBehaviorEvaluatorsTagsBBKey.AllowedTypes.Add(NewObject<UBlackboardKeyType_GameplayTag>(this, GET_MEMBER_NAME_CHECKED(UNpcBlackboardKeysDataAsset, ActiveBehaviorEvaluatorsTagsBBKey)));
+
 }

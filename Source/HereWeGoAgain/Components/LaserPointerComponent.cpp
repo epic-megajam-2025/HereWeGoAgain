@@ -54,13 +54,14 @@ void ULaserPointerComponent::PointLaser()
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, LaserTraceStart, LaserTraceStart + ViewRotation.Vector() * LaserTraceDistance,
 		LaserTraceChannel, QueryParams);
 
-	PointLaserAt(LaserTraceStart, bHit ? HitResult.Location : HitResult.TraceEnd);
+	PointLaserAt(LaserTraceStart, bHit ? HitResult.Location : HitResult.TraceEnd, HitResult.ImpactNormal);
 }
 
 
-void ULaserPointerComponent::PointLaserAt_Implementation(const FVector& PointingFrom, const FVector& PointingAt)
+void ULaserPointerComponent::PointLaserAt_Implementation(const FVector& PointingFrom, const FVector& PointingAt, const FVector& SurfaceNormal)
 {
-	LaserPointerActor->SetActorLocation(PointingAt);
+	// adding small extra offset by surface normal for more reliable EQS tests
+	LaserPointerActor->SetActorLocation(PointingAt + SurfaceNormal * 5.f);
 	if (bDebug_DrawTrace)
 		DrawDebugLine(GetWorld(), PointingFrom, PointingAt, FColor::Red, false, 0.0f, 0, 1.0f);
 }

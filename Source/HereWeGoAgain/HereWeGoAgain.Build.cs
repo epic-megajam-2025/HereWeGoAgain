@@ -21,7 +21,8 @@ public class HereWeGoAgain : ModuleRules
 			"GameplayAbilities",
 			"GameplayTasks",
 			"GameplayTags",
-			"Gestures"
+			"Gestures",
+			"GameplayBehaviorsModule"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

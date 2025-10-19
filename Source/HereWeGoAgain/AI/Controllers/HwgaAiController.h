@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "GameplayEffectTypes.h"
 #include "Characters/HWGABaseCharacter.h"
 #include "HwgaAiController.generated.h"
 
+class UNpcBehaviorEvaluatorComponent;
 class UNpcBlackboardKeysDataAsset;
 class UNpcComponent;
 class UNpcStatesComponent;
@@ -35,12 +35,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UNpcComponent* NpcComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UNpcBehaviorEvaluatorComponent* NpcBehaviorEvaluatorComponent;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UNpcBlackboardKeysDataAsset* BlackboardKeys;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UBehaviorTree* RootBehaviorTree;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTagContainer InitiallyActiveBehaviorEvaluators;
+
 private:
-	TWeakObjectPtr<AHWGABaseCharacter> PossesedCharacter;
+	TWeakObjectPtr<AHWGABaseCharacter> PossessedCharacter;
 };

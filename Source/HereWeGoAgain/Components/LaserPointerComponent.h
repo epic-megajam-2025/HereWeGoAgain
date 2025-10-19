@@ -38,7 +38,7 @@ protected:
 	void BP_StopPointingLaser(const FVector& PointingAt);
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void PointLaserAt(const FVector& PointingFrom, const FVector& PointingAt);
+	void PointLaserAt(const FVector& PointingFrom, const FVector& PointingAt, const FVector& SurfaceNormal);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float LaserTraceDistance = 100000.f;

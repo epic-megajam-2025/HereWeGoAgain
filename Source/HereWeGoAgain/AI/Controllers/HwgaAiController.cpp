@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "AI/Components/HwgaAiPerceptionComponent.h"
 #include "AI/Components/HwgaBehaviorTreeComponent.h"
+#include "AI/Components/NpcBehaviorEvaluatorComponent.h"
 #include "AI/Components/NpcComponent.h"
 #include "AI/Components/NpcStatesComponent.h"
 #include "AI/Data/AIGameplayTags.h"
@@ -27,6 +28,7 @@ AHwgaAiController::AHwgaAiController(const FObjectInitializer& ObjectInitializer
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 	BrainComponent = CreateDefaultSubobject<UHwgaBehaviorTreeComponent>(TEXT("BrainComponent"));
 	PerceptionComponent = CreateDefaultSubobject<UHwgaAiPerceptionComponent>(TEXT("Perception"));
+	NpcBehaviorEvaluatorComponent = CreateDefaultSubobject<UNpcBehaviorEvaluatorComponent>(TEXT("NpcBehaviorEvaluatorComponent"));
 }
 
 void AHwgaAiController::OnPossess(APawn* InPawn)
@@ -35,8 +37,8 @@ void AHwgaAiController::OnPossess(APawn* InPawn)
 	if (auto ASCInterface = Cast<IAbilitySystemInterface>(InPawn))
 		NpcStatesComponent->SetAbilitySystemComponent(ASCInterface->GetAbilitySystemComponent());
 
-	PossesedCharacter = Cast<AHWGABaseCharacter>(InPawn);
-	if (!PossesedCharacter.IsValid())
+	PossessedCharacter = Cast<AHWGABaseCharacter>(InPawn);
+	if (!PossessedCharacter.IsValid())
 	{
 		UE_LOG(LogHWGA, Warning, TEXT("Possessed character is not HWGABaseCharacter"));
 		return;
@@ -51,6 +53,8 @@ void AHwgaAiController::OnPossess(APawn* InPawn)
 	RunBehaviorTree(RootBehaviorTree);
 	if (IsValid(BlackboardKeys))
 	{
+		NpcBehaviorEvaluatorComponent->Initialize(Cast<UBehaviorTreeComponent>(GetBrainComponent()), BlackboardKeys);
+		
 		GetWorld()->GetTimerManager().SetTimerForNextTick([this]
 		{
 			auto WLS = GetWorld()->GetSubsystem<UWorldLocationSubsystem>();
@@ -62,10 +66,12 @@ void AHwgaAiController::OnPossess(APawn* InPawn)
 
 			if (IsValid(GameEndLocation) && !BlackboardKeys->EndLocationBBKey.SelectedKeyName.IsNone())
 				BlackboardComponent->SetValueAsVector(BlackboardKeys->EndLocationBBKey.SelectedKeyName, GameEndLocation->GetActorLocation());
+
+			NpcBehaviorEvaluatorComponent->RequestEvaluatorsActive(InitiallyActiveBehaviorEvaluators, true);
 		});
 	}
 
-	OnMoveSpeedChanged(PossesedCharacter->GetCharacterMovement()->MaxWalkSpeed);
+	OnMoveSpeedChanged(PossessedCharacter->GetCharacterMovement()->MaxWalkSpeed);
 }
 
 void AHwgaAiController::SetFocus(AActor* NewFocus, EAIFocusPriority::Type InPriority)
@@ -73,10 +79,10 @@ void AHwgaAiController::SetFocus(AActor* NewFocus, EAIFocusPriority::Type InPrio
 	Super::SetFocus(NewFocus, InPriority);
 	if (InPriority >= EAIFocusPriority::Gameplay)
 	{
-		if (PossesedCharacter.IsValid())
+		if (PossessedCharacter.IsValid())
 		{
-			PossesedCharacter->AddGameplayTag(AIGameplayTags::AI_State_Focused, true);
-			if (auto HwgaAnimInstance = Cast<UHwgaAnimInstance>(PossesedCharacter->GetMesh()->GetAnimInstance()))
+			PossessedCharacter->AddGameplayTag(AIGameplayTags::AI_State_Focused, true);
+			if (auto HwgaAnimInstance = Cast<UHwgaAnimInstance>(PossessedCharacter->GetMesh()->GetAnimInstance()))
 				HwgaAnimInstance->SetFocusActor(NewFocus);
 		}
 	}
@@ -87,10 +93,10 @@ void AHwgaAiController::SetFocalPoint(FVector NewFocus, EAIFocusPriority::Type I
 	Super::SetFocalPoint(NewFocus, InPriority);
 	if (InPriority >= EAIFocusPriority::Gameplay)
 	{
-		if (PossesedCharacter.IsValid())
+		if (PossessedCharacter.IsValid())
 		{
-			PossesedCharacter->AddGameplayTag(AIGameplayTags::AI_State_Focused, true);
-			if (auto HwgaAnimInstance = Cast<UHwgaAnimInstance>(PossesedCharacter->GetMesh()->GetAnimInstance()))
+			PossessedCharacter->AddGameplayTag(AIGameplayTags::AI_State_Focused, true);
+			if (auto HwgaAnimInstance = Cast<UHwgaAnimInstance>(PossessedCharacter->GetMesh()->GetAnimInstance()))
 				HwgaAnimInstance->SetFocusPoint(NewFocus);
 		}
 	}
@@ -101,10 +107,10 @@ void AHwgaAiController::ClearFocus(EAIFocusPriority::Type InPriority)
 	Super::ClearFocus(InPriority);
 	if (InPriority >= EAIFocusPriority::Gameplay)
 	{
-		if (PossesedCharacter.IsValid())
+		if (PossessedCharacter.IsValid())
 		{
-			PossesedCharacter->RemoveGameplayTag(AIGameplayTags::AI_State_Focused);
-			if (auto HwgaAnimInstance = Cast<UHwgaAnimInstance>(PossesedCharacter->GetMesh()->GetAnimInstance()))
+			PossessedCharacter->RemoveGameplayTag(AIGameplayTags::AI_State_Focused);
+			if (auto HwgaAnimInstance = Cast<UHwgaAnimInstance>(PossessedCharacter->GetMesh()->GetAnimInstance()))
 				HwgaAnimInstance->ClearFocusPoint();
 		}
 	}

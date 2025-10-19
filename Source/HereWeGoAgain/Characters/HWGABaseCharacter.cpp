@@ -75,8 +75,8 @@ void AHWGABaseCharacter::SetStrafing_Implementation(bool bRequireStrafing)
 {
 	auto CMC = GetCharacterMovement();
 	CMC->bOrientRotationToMovement = !bRequireStrafing;
-	// CMC->bUseControllerDesiredRotation = bRequireStrafing;
-	bUseControllerRotationYaw = bRequireStrafing;
+	CMC->bUseControllerDesiredRotation = bRequireStrafing;
+	bUseControllerRotationYaw = false;
 }
 
 void AHWGABaseCharacter::ChangeGameplayTags(const FGameplayTagContainer& DeltaTags, bool bAppend)

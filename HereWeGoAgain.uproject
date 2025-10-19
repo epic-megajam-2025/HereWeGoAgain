@@ -38,6 +38,10 @@
 		{
 			"Name": "Gestures",
 			"Enabled": true
+		},
+		{
+			"Name": "GameplayBehaviors",
+			"Enabled": true
 		}
 	]
 }

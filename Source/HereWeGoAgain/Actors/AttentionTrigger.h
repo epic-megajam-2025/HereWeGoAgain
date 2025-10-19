@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "AttentionTrigger.generated.h"
 
@@ -24,6 +25,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsAttentionTriggerActive() const { return bAttentionTriggerActive; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FGameplayTag GetAttentionTriggerTag() const { return AttentionTriggerTag; }
 	
 protected:
 	// Called when the game starts or when spawned
@@ -37,4 +41,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bAttentionTriggerActive = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag AttentionTriggerTag;	
 };
