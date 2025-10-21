@@ -30,9 +30,13 @@ public:
 	void RemoveGameplayTag(const FGameplayTag& Tag);
 
 	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0) override;
-	
+
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void Falling() override;
+	virtual void Landed(const FHitResult& Hit) override;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UHWGAAbilitySystemComponent* AbilitySystemComponent;
@@ -58,8 +62,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayTagQuery StrafeWhenCharacterInState;
 
+	// this value is multiplied by CMC->RotationRate.Yaw, so it should be small-ish
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float RotateToInterpolationRate = 0.15f;
+	float RotateToInterpolationRate = 0.03f;
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnGameplayTagsChanged();
@@ -72,9 +77,12 @@ protected:
 	static FName GesturesComponentName;
 	
 	void ChangeGameplayTags(const FGameplayTagContainer& DeltaTags, bool bAppend);
+	void ChangeGameplayTags(const FGameplayTag& ChangedTag, bool bAppend);
+	void UpdateStrafing();
+	
 	bool Gesture(const FGameplayTag& GestureTag);
 	void StopGesture();
-	
+
 public: // IAbilitySystemInterface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 

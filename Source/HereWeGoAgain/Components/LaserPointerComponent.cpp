@@ -60,8 +60,8 @@ void ULaserPointerComponent::PointLaser()
 
 void ULaserPointerComponent::PointLaserAt_Implementation(const FVector& PointingFrom, const FVector& PointingAt, const FVector& SurfaceNormal)
 {
-	// adding small extra offset by surface normal for more reliable EQS tests
-	LaserPointerActor->SetActorLocation(PointingAt + SurfaceNormal * 5.f);
+	// adding extra offset by surface normal for more reliable EQS tests and AI perception
+	LaserPointerActor->SetActorLocation(PointingAt + SurfaceNormal * SurfaceOffset);
 	if (bDebug_DrawTrace)
 		DrawDebugLine(GetWorld(), PointingFrom, PointingAt, FColor::Red, false, 0.0f, 0, 1.0f);
 }

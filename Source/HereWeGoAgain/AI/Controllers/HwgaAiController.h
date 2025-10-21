@@ -23,6 +23,8 @@ public:
 	virtual void SetFocus(AActor* NewFocus, EAIFocusPriority::Type InPriority = EAIFocusPriority::Gameplay) override;
 	virtual void SetFocalPoint(FVector NewFocus, EAIFocusPriority::Type InPriority = EAIFocusPriority::Gameplay) override;
 	virtual void ClearFocus(EAIFocusPriority::Type InPriority) override;
+
+	virtual void Tick(float DeltaSeconds) override;
 	
 protected:
 	virtual void OnPossess(APawn* InPawn) override;

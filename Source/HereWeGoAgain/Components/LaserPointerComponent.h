@@ -51,7 +51,10 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TEnumAsByte<ECollisionChannel> LaserTraceChannel = ECC_Visibility;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float SurfaceOffset = 5.f;
+
 private:
 	void PointLaser();
 	TWeakObjectPtr<AAttentionTrigger> LaserPointerActor;

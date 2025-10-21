@@ -75,8 +75,9 @@ void AHwgaAiController::OnPossess(APawn* InPawn)
 void AHwgaAiController::SetFocus(AActor* NewFocus, EAIFocusPriority::Type InPriority)
 {
 	Super::SetFocus(NewFocus, InPriority);
-	if (InPriority >= EAIFocusPriority::Gameplay)
+	if (InPriority >= EAIFocusPriority::Gameplay && IsValid(NewFocus))
 	{
+		UE_VLOG(this, LogAI_Focus, Verbose, TEXT("Got actor focus: %s"), *NewFocus->GetName());
 		if (PossessedCharacter.IsValid())
 		{
 			PossessedCharacter->AddGameplayTag(AIGameplayTags::AI_State_Focused, true);
@@ -91,6 +92,7 @@ void AHwgaAiController::SetFocalPoint(FVector NewFocus, EAIFocusPriority::Type I
 	Super::SetFocalPoint(NewFocus, InPriority);
 	if (InPriority >= EAIFocusPriority::Gameplay)
 	{
+		UE_VLOG(this, LogAI_Focus, Verbose, TEXT("Got new location focus: %s"), *NewFocus.ToString());
 		if (PossessedCharacter.IsValid())
 		{
 			PossessedCharacter->AddGameplayTag(AIGameplayTags::AI_State_Focused, true);
@@ -105,6 +107,7 @@ void AHwgaAiController::ClearFocus(EAIFocusPriority::Type InPriority)
 	Super::ClearFocus(InPriority);
 	if (InPriority >= EAIFocusPriority::Gameplay)
 	{
+		UE_VLOG(this, LogAI_Focus, Verbose, TEXT("Clear focus"));
 		if (PossessedCharacter.IsValid())
 		{
 			PossessedCharacter->RemoveGameplayTag(AIGameplayTags::AI_State_Focused);
@@ -112,4 +115,16 @@ void AHwgaAiController::ClearFocus(EAIFocusPriority::Type InPriority)
 				HwgaAnimInstance->ClearFocusPoint();
 		}
 	}
+}
+
+void AHwgaAiController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+#if WITH_EDITOR
+	auto FocusPoint = GetFocalPoint();
+	if (FocusPoint != FAISystem::InvalidLocation)
+	{
+		UE_VLOG_LOCATION(this, LogAI_Focus, VeryVerbose, FocusPoint, 12, FColor::Yellow,  TEXT("Focus"));
+	}
+#endif
 }

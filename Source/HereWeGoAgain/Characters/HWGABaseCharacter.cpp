@@ -4,9 +4,11 @@
 #include "HWGABaseCharacter.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AI/Data/HWGAGameplayTags.h"
 #include "Components/BaseGesturesComponent.h"
 #include "Components/HWGACharacterMovementComponent.h"
 #include "Data/GestureTags.h"
+#include "Game/LogChannels.h"
 #include "GAS/GameplayAbilityTargetData_Gesture.h"
 #include "GAS/HWGAAbilitySystemComponent.h"
 #include "GAS/Attributes/MovementAttributeSet.h"
@@ -45,6 +47,18 @@ void AHWGABaseCharacter::BeginPlay()
 			AbilitySystemComponent->GiveAbility(AbilitySpec);
 		}
 	}
+}
+
+void AHWGABaseCharacter::Falling()
+{
+	Super::Falling();
+	ChangeGameplayTags(HWGAGameplayTags::Character_State_InAir, true);
+}
+
+void AHWGABaseCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	ChangeGameplayTags(HWGAGameplayTags::Character_State_InAir, false);
 }
 
 UMovementAttributeSet* AHWGABaseCharacter::GetMovementAttributeSet() const
@@ -97,15 +111,30 @@ void AHWGABaseCharacter::FaceRotation(FRotator NewControlRotation, float DeltaTi
 		}
 #endif
 
-		auto InterpolatedRotation = FMath::RInterpTo(CurrentRotation, NewControlRotation, DeltaTime, RotateToInterpolationRate * GetCharacterMovement()->RotationRate.Yaw);
+		auto InterpolatedRotation = FMath::RInterpTo(CurrentRotation, NewControlRotation, DeltaTime,
+			RotateToInterpolationRate * GetCharacterMovement()->RotationRate.Yaw);
 		SetActorRotation(InterpolatedRotation);
 	}
 }
 
-void AHWGABaseCharacter::OnGameplayTagsChanged_Implementation()
+void AHWGABaseCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+#if WITH_EDITOR
+	FVector StartLocation = GetActorLocation() + FVector::UpVector * 35.f;
+	UE_VLOG_ARROW(this, LogCharacter_FV, VeryVerbose, StartLocation, StartLocation + GetActorForwardVector() * 150.f, FColor::Blue, TEXT("FV"));
+#endif
+}
+
+void AHWGABaseCharacter::UpdateStrafing()
 {
 	bool bRequireStrafing = StrafeWhenCharacterInState.Matches(CharacterTags);
 	SetStrafing(bRequireStrafing);
+}
+
+void AHWGABaseCharacter::OnGameplayTagsChanged_Implementation()
+{
+	UpdateStrafing();
 }
 
 void AHWGABaseCharacter::SetStrafing_Implementation(bool bRequireStrafing)
@@ -114,6 +143,16 @@ void AHWGABaseCharacter::SetStrafing_Implementation(bool bRequireStrafing)
 	CMC->bOrientRotationToMovement = !bRequireStrafing;
 	CMC->bUseControllerDesiredRotation = bRequireStrafing;
 	bUseControllerRotationYaw = false;
+}
+
+void AHWGABaseCharacter::ChangeGameplayTags(const FGameplayTag& ChangedTag, bool bAppend)
+{
+	if (bAppend)
+		CharacterTags.AddTag(ChangedTag);
+	else
+		CharacterTags.RemoveTag(ChangedTag);
+
+	OnGameplayTagsChanged();
 }
 
 void AHWGABaseCharacter::ChangeGameplayTags(const FGameplayTagContainer& DeltaTags, bool bAppend)
