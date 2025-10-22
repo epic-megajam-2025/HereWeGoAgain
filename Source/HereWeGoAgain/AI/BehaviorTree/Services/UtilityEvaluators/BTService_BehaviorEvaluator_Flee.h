@@ -14,10 +14,20 @@ class HEREWEGOAGAIN_API UBTService_BehaviorEvaluator_Flee : public UBTService_Be
 {
 	GENERATED_BODY()
 
+private:
+	struct FBTMemory_BehaviorEvaluator_Flee : public FBTMemory_BehaviorEvaluator_Base
+	{
+		TWeakObjectPtr<AActor> LastTriggeredActor;
+	};
+	
 public:
 	UBTService_BehaviorEvaluator_Flee();
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	virtual uint16 GetInstanceMemorySize() const override { return sizeof(FBTMemory_BehaviorEvaluator_Flee); };
 	virtual FString GetStaticDescription() const override;
+
+	virtual void InitiateBehaviorState(UBehaviorTreeComponent* BTComponent) const override;
+	virtual void FinalizeBehaviorState(UBehaviorTreeComponent* BTComponent) const override;
 	
 protected:
 	UPROPERTY(EditAnywhere)
@@ -28,6 +38,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	FRuntimeFloatCurve DistanceToFleeScaleDependencyCurve;
+
+	UPROPERTY(EditAnywhere)
+	FBlackboardKeySelector OutAttractionActorBBKey;
 	
 private:
 	float UpdatePerception(UBehaviorTreeComponent& OwnerComp, FBTMemory_BehaviorEvaluator_Base* BTMemory) const;

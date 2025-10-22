@@ -14,6 +14,7 @@
 UBTService_BehaviorEvaluator_Flee::UBTService_BehaviorEvaluator_Flee()
 {
 	NodeName = "Utility evaluator: flee";
+	OutAttractionActorBBKey.AddObjectFilter(this, GET_MEMBER_NAME_CHECKED(UBTService_BehaviorEvaluator_Flee, OutAttractionActorBBKey), AActor::StaticClass());
 }
 
 void UBTService_BehaviorEvaluator_Flee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
@@ -36,6 +37,9 @@ float UBTService_BehaviorEvaluator_Flee::UpdatePerception(UBehaviorTreeComponent
 	FVector NpcLocation = OwnerNpc->GetActorLocation();
 	float FleeScale = BTMemory->NpcComponent->GetAttentionTriggerAttractionScale(AIGameplayTags::Attention_Trigger_Flee);
 	auto DistanceDependency = DistanceToFleeScaleDependencyCurve.GetRichCurveConst();
+
+	FBTMemory_BehaviorEvaluator_Flee* FleeBTMemory = reinterpret_cast<FBTMemory_BehaviorEvaluator_Flee*>(BTMemory);
+	
 	for (auto DataIt = BTMemory->PerceptionComponent->GetPerceptualDataIterator(); DataIt; ++DataIt)
 	{
 		// scan hearing and damage, collect visual targets
@@ -57,6 +61,7 @@ float UBTService_BehaviorEvaluator_Flee::UpdatePerception(UBehaviorTreeComponent
 						DistanceScale = DistanceDependency->Eval((NpcLocation - AIStimulus.StimulusLocation).Size());
 					
 					Result += SoundTriggers[SoundTag] * DistanceScale;
+					FleeBTMemory->LastTriggeredActor = DataIt->Value.Target;
 					AIStimulus.MarkExpired();
 				}
 			}
@@ -85,4 +90,24 @@ FString UBTService_BehaviorEvaluator_Flee::GetStaticDescription() const
 		SoundTriggerDescription += FString::Printf(TEXT("\n%s: %.2f"), *SoundTrigger.Key.ToString(), SoundTrigger.Value);
 	
 	return FString::Printf(TEXT("React to sounds:%s\n%s"), *SoundTriggerDescription, *Super::GetStaticDescription());
+}
+
+void UBTService_BehaviorEvaluator_Flee::InitiateBehaviorState(UBehaviorTreeComponent* BTComponent) const
+{
+	Super::InitiateBehaviorState(BTComponent);
+	auto BTMemory = reinterpret_cast<FBTMemory_BehaviorEvaluator_Flee*>(BTComponent->GetNodeMemory(this, BTComponent->FindInstanceContainingNode(this)));
+	BTComponent->GetBlackboardComponent()->SetValueAsObject(OutAttractionActorBBKey.SelectedKeyName, BTMemory->LastTriggeredActor.Get());
+}
+
+void UBTService_BehaviorEvaluator_Flee::FinalizeBehaviorState(UBehaviorTreeComponent* BTComponent) const
+{
+	if (!IsValid(BTComponent))
+		return;
+	
+	auto BTMemory = reinterpret_cast<FBTMemory_BehaviorEvaluator_Flee*>(BTComponent->GetNodeMemory(this, BTComponent->FindInstanceContainingNode(this)));
+	if (BTMemory)
+		BTMemory->LastTriggeredActor.Reset();
+	
+	BTComponent->GetBlackboardComponent()->ClearValue(OutAttractionActorBBKey.SelectedKeyName);
+	Super::FinalizeBehaviorState(BTComponent);
 }
