@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AITypes.h"
+#include "AttributeSet.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
 #include "NpcComponent.generated.h"
@@ -20,7 +21,7 @@ public:
 	
 	FORCEINLINE void SetDistanceToTarget(float NewValue) { DistanceToTarget = NewValue; }
 	FORCEINLINE float GetDistanceToTarget() const { return DistanceToTarget; }
-	
+
 	void StoreTaggedLocation(const FGameplayTag& DataTag, const FVector& Vector);
 	void StoreTaggedActor(const FGameplayTag& DataTag, AActor* Actor);
 
@@ -28,10 +29,14 @@ public:
 	FVector GetStoredLocation(const FGameplayTag& DataTag, bool bConsumeAfterReading = false);
 
 	const FRichCurve* GetCatchUpSpeedDependencyCurve() const;
+	float GetAttentionTriggerAttractionScale(const FGameplayTag& AttentionTriggerTag) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FRuntimeFloatCurve CatchUpSpeedDependencyCurve;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TMap<FGameplayTag, FGameplayAttribute> AttentionTriggerAttractionScales;	
 	
 private:
 	float DistanceToTarget = 0.f;

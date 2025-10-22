@@ -3,16 +3,18 @@
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "NavLinkCustomInterface.h"
+#include "AI/Controllers/HwgaAiController.h"
 #include "AI/Data/AiDataTypes.h"
 #include "AI/Data/AIGameplayTags.h"
 #include "AI/Data/HWGAGAMEPLAYTAGS.h"
 #include "Components/AudioComponent.h"
 #include "Components/HWGACharacterMovementComponent.h"
 #include "Components/NpcGesturesComponent.h"
-#include "Curves/CurveVector.h"
 #include "Game/LogChannels.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GAS/NpcAbilitySystemComponent.h"
+#include "GAS/Attributes/AttentionAttributeSet.h"
+#include "GAS/Attributes/NpcPerceptionAttributeSet.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Settings/AISettings.h"
 #include "Sound/SoundCue.h"
@@ -23,6 +25,8 @@ ANpc::ANpc(const FObjectInitializer& ObjectInitializer)
 {
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	AudioComponent->SetupAttachment(GetMesh(), FName("head"));
+	PerceptionAttributeSet = CreateDefaultSubobject<UNpcPerceptionAttributeSet>(TEXT("PerceptionAttributeSet"));
+	AttentionAttributeSet = CreateDefaultSubobject<UAttentionAttributeSet>(TEXT("AttentionAttributeSet"));
 	GetCharacterMovement()->bNotifyApex = true;
 }
 
@@ -84,9 +88,10 @@ void ANpc::UseNavLink_Jump(const FVector& Destination, TScriptInterface<INavLink
 	if (auto SpeedDependencyZ = AISettings->NavLinkJumpSpeedDependencyCurve_Z.GetRichCurveConst())
 		SpeedZ = SpeedDependencyZ->Eval(HeightDiff);
 	
-	FVector LaunchVector = FVector(Direction.X * SpeedXY, Direction.Y * SpeedXY, Direction.Z * SpeedZ);
+	FVector LaunchVector = FVector(Direction.X * SpeedXY, Direction.Y * SpeedXY, SpeedZ);
 
 	// UE_VLOG(this, LogAI_NavLink, Verbose, TEXT("Jumping with speed %.2f and angle %.2f"), Speed, Angle);
+	UE_VLOG(this, LogAI_NavLink, Verbose, TEXT("Using navlink jump, launch vector: %s"), *LaunchVector.ToString());
 	UE_VLOG_ARROW(this, LogAI_NavLink, Verbose, ActorLocation, ActorLocation + LaunchVector, FColor::Cyan, TEXT("Launch vector"));
 	NavLinkDestination = Destination;
 	ChangeGameplayTags(HWGAGameplayTags::Character_State_UsingNavLink, true);
@@ -122,6 +127,19 @@ void ANpc::RepositionToNavmesh()
 	{
 		UE_VLOG(this, LogAI, Warning, TEXT("Failed to project character location to navmesh"));
 	}
+}
+
+void ANpc::UpdateSenseSettings(const FOnAttributeChangeData& Data)
+{
+	if (!AIController.IsValid())
+		return;
+	
+	if (Data.Attribute == UNpcPerceptionAttributeSet::GetSightRadiusAttribute())
+		AIController->SetSightRadius(Data.NewValue);
+	else if (Data.Attribute == UNpcPerceptionAttributeSet::GetSightHalfAngleAttribute())
+		AIController->SetSightHalfAngle(Data.NewValue);
+	else if(Data.Attribute == UNpcPerceptionAttributeSet::GetHearingRadiusAttribute())
+		AIController->SetHearingRadius(Data.NewValue);
 }
 
 void ANpc::Landed(const FHitResult& Hit)
@@ -164,7 +182,16 @@ void ANpc::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousC
 void ANpc::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	AIController = Cast<AAIController>(NewController);
+	AIController = Cast<AHwgaAiController>(NewController);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UNpcPerceptionAttributeSet::GetHearingRadiusAttribute())
+		.AddUObject(this, &ANpc::UpdateSenseSettings);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UNpcPerceptionAttributeSet::GetSightRadiusAttribute())
+		.AddUObject(this, &ANpc::UpdateSenseSettings);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UNpcPerceptionAttributeSet::GetSightHalfAngleAttribute())
+		.AddUObject(this, &ANpc::UpdateSenseSettings);
+	AIController->SetSightHalfAngle(PerceptionAttributeSet->GetSightHalfAngle());
+	AIController->SetSightRadius(PerceptionAttributeSet->GetSightRadius());
+	AIController->SetHearingRadius(PerceptionAttributeSet->GetHearingRadius());
 }
 
 void ANpc::Say(const FGameplayTag& Phrase)

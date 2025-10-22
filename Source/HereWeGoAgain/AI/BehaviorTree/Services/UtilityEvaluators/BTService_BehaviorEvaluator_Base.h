@@ -8,6 +8,7 @@
 #include "BehaviorTree/ValueOrBBKey.h"
 #include "BTService_BehaviorEvaluator_Base.generated.h"
 
+class UNpcComponent;
 class UHwgaAiPerceptionComponent;
 struct FBehaviorEvaluatorBlockRequest;
 
@@ -19,6 +20,7 @@ class HEREWEGOAGAIN_API UBTService_BehaviorEvaluator_Base : public UBTService, p
 protected:
 	struct FBTMemory_BehaviorEvaluator_Base
 	{
+		TWeakObjectPtr<UNpcComponent> NpcComponent;
 		TWeakObjectPtr<UHwgaAiPerceptionComponent> PerceptionComponent;
 		// means is utility evaluation running
 		bool bBlocked = false;

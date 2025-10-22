@@ -24,6 +24,10 @@ public:
 	virtual void SetFocalPoint(FVector NewFocus, EAIFocusPriority::Type InPriority = EAIFocusPriority::Gameplay) override;
 	virtual void ClearFocus(EAIFocusPriority::Type InPriority) override;
 
+	void SetSightRadius(const float NewRadius);
+	void SetSightHalfAngle(const float NewHalfAngle);
+	void SetHearingRadius(const float NewHearingRadius);
+	
 	virtual void Tick(float DeltaSeconds) override;
 	
 protected:

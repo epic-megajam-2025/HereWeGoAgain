@@ -32,6 +32,8 @@ public:
 	virtual void FaceRotation(FRotator NewControlRotation, float DeltaTime = 0) override;
 
 	virtual void Tick(float DeltaSeconds) override;
+	
+	const FGameplayTag& GetCharacterId() const { return CharacterId; };
 
 protected:
 	virtual void BeginPlay() override;
@@ -56,6 +58,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UGesturesDataAsset> GesturesDataAsset;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag CharacterId;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayTagContainer CharacterTags;
 

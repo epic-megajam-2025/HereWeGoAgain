@@ -24,4 +24,9 @@ namespace AIGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(AI_SetByCaller_UpdateSpeedToBeAtLocationMMC_MaxSpeed, "AI.SetByCaller.UpdateSpeedToBeAtLocationMMC.MaxSpeed", "");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(AI_State_Focused, "AI.State.Focused", "");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attention_Trigger_LaserPointer, "AI.Attention.Trigger.LaserPointer", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attention_Trigger_Hunt, "AI.Attention.Trigger.Hunt", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attention_Trigger_Flee, "AI.Attention.Trigger.Flee", "");
+
 }

@@ -219,6 +219,7 @@ void AHWGABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContaine
 {
 	TagContainer.AppendTags(CharacterTags);
 	TagContainer.AppendTags(AbilitySystemComponent->GetOwnedGameplayTags());
+	TagContainer.AddTag(CharacterId);
 }
 
 bool AHWGABaseCharacter::Gesture(const FGameplayTag& GestureTag)

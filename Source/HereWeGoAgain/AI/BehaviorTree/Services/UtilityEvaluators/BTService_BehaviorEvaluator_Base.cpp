@@ -7,6 +7,7 @@
 #include "BlackboardKeyType_GameplayTag.h"
 #include "AI/Components/HwgaAiPerceptionComponent.h"
 #include "AI/Components/NpcBehaviorEvaluatorComponent.h"
+#include "AI/Components/NpcComponent.h"
 #include "AI/Data/AiDataTypes.h"
 #include "BehaviorTree/BehaviorTree.h"
 
@@ -27,6 +28,7 @@ void UBTService_BehaviorEvaluator_Base::OnBecomeRelevant(UBehaviorTreeComponent&
 	auto Blackboard = OwnerComp.GetBlackboardComponent();
 	auto BTMemory = reinterpret_cast<FBTMemory_BehaviorEvaluator_Base*>(NodeMemory);
 	BTMemory->PerceptionComponent = Cast<UHwgaAiPerceptionComponent>(AIController->GetAIPerceptionComponent());
+	BTMemory->NpcComponent = AIController->FindComponentByClass<UNpcComponent>();
 	BTMemory->InactiveUtilityAccumulationRate = InactiveUtilityAccumulationRate.GetValue(Blackboard);
 	BTMemory->InactiveUtilityRegressionOffset = InactiveUtilityRegressionOffset.GetValue(Blackboard);
 	BTMemory->ActiveUtilityAccumulationRate = ActiveUtilityAccumulationRate.GetValue(Blackboard);

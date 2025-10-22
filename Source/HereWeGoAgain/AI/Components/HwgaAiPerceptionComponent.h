@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "HwgaAiPerceptionComponent.generated.h"
 
@@ -12,8 +11,13 @@ class HEREWEGOAGAIN_API UHwgaAiPerceptionComponent : public UAIPerceptionCompone
 {
 	GENERATED_BODY()
 
-	private:
+private:
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FTargetPerceptionUpdatedNativeDelegate, AActor* TriggerActor, const FAIStimulus& Stimulus);
+
+struct FTransientPerceptionData
+{
+	
+};
 	
 public:
 	UHwgaAiPerceptionComponent();
@@ -40,4 +44,5 @@ private:
 	void OnTargetPerceptionUpdatedHandler(AActor* Actor, FAIStimulus Stimulus);
 
 	TMap<TWeakObjectPtr<AActor>, float> ActorsObservationTime;
+	
 };

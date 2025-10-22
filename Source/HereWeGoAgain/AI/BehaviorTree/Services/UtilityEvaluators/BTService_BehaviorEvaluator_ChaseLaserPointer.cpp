@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "Actors/AttentionTrigger.h"
 #include "AI/Components/HwgaAiPerceptionComponent.h"
+#include "AI/Components/NpcComponent.h"
+#include "AI/Data/AIGameplayTags.h"
 #include "Game/LogChannels.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Sight.h"
@@ -129,7 +131,8 @@ float UBTService_BehaviorEvaluator_ChaseLaserPointer::UpdatePerception(UBehavior
 		UE_VLOG(OwnerComp.GetAIOwner(), LogAIUtility_ChaseLaser, Verbose, TEXT("Updated target in BB"));
 	}
 
-	const float Result = RegressionOffset + MotionUtility + ObservationBase * ObservationDurationUtilityScale;
+	const float AttentionTriggerAttractionScale = ChaseBTMemory->NpcComponent->GetAttentionTriggerAttractionScale(AIGameplayTags::Attention_Trigger_LaserPointer);
+	const float Result = RegressionOffset + (MotionUtility + ObservationBase * ObservationDurationUtilityScale) * AttentionTriggerAttractionScale;
 	UE_VLOG(OwnerComp.GetAIOwner(), LogAIUtility_ChaseLaser, Verbose, TEXT("Result = %.2f"), Result);
 	return Result;
 }

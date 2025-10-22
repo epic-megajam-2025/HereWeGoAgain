@@ -3,10 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "AI/Interfaces/NpcInterface.h"
 #include "Characters/HWGABaseCharacter.h"
 #include "Npc.generated.h"
 
+class UAttentionAttributeSet;
+class AHwgaAiController;
+class UNpcPerceptionAttributeSet;
 class INavLinkCustomInterface;
 class UMovementAttributeSet;
 
@@ -22,10 +26,16 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UAudioComponent* AudioComponent;
+
+	UPROPERTY()
+	UNpcPerceptionAttributeSet* PerceptionAttributeSet;
+
+	UPROPERTY()
+	UAttentionAttributeSet* AttentionAttributeSet;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TMap<FGameplayTag, TSoftObjectPtr<USoundCue>> Phrases;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float JumpNavLinkInterpolationRate = 10.f;
 
@@ -39,7 +49,9 @@ private:
 	void TryFinishUsingNavLink();
 	void RepositionToNavmesh();
 
-	TWeakObjectPtr<AAIController> AIController;
+	void UpdateSenseSettings(const FOnAttributeChangeData& OnAttributeChangeData);
+	
+	TWeakObjectPtr<AHwgaAiController> AIController;
 
 	UPROPERTY()
 	TScriptInterface<INavLinkCustomInterface> ActiveNavLink;

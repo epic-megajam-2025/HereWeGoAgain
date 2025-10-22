@@ -17,6 +17,8 @@
 #include "Characters/HWGABaseCharacter.h"
 #include "Game/LogChannels.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/AISenseConfig_Hearing.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "Subsystems/WorldLocationSubsystem.h"
 
 AHwgaAiController::AHwgaAiController(const FObjectInitializer& ObjectInitializer)
@@ -117,14 +119,67 @@ void AHwgaAiController::ClearFocus(EAIFocusPriority::Type InPriority)
 	}
 }
 
+void AHwgaAiController::SetSightRadius(const float NewRadius)
+{
+	for (auto Itr = PerceptionComponent->GetSensesConfigIterator(); Itr; ++Itr)
+	{
+		UAISenseConfig* Config = *Itr;
+		if(UAISenseConfig_Sight* SightConfig = Cast<UAISenseConfig_Sight>(Config))
+		{
+			SightConfig->SightRadius = NewRadius;
+			SightConfig->LoseSightRadius = NewRadius * 1.2f;
+			PerceptionComponent->ConfigureSense(*SightConfig);
+			break;
+		}
+	}
+}
+
+void AHwgaAiController::SetSightHalfAngle(const float NewHalfAngle)
+{
+	for (auto Itr = PerceptionComponent->GetSensesConfigIterator(); Itr; ++Itr)
+	{
+		UAISenseConfig* Config = *Itr;
+		if(UAISenseConfig_Sight* SightConfig = Cast<UAISenseConfig_Sight>(Config))
+		{
+			SightConfig->PeripheralVisionAngleDegrees = NewHalfAngle;
+			PerceptionComponent->ConfigureSense(*SightConfig);
+			break;
+		}
+	}
+}
+
+void AHwgaAiController::SetHearingRadius(const float NewHearingRadius)
+{
+	for (auto Itr = PerceptionComponent->GetSensesConfigIterator(); Itr; ++Itr)
+	{
+		UAISenseConfig* Config = *Itr;
+		if(UAISenseConfig_Hearing* HearingConfig = Cast<UAISenseConfig_Hearing>(Config))
+		{
+			HearingConfig->HearingRange =NewHearingRadius;
+			PerceptionComponent->ConfigureSense(*HearingConfig);
+			break;
+		}
+	}
+}
+
 void AHwgaAiController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 #if WITH_EDITOR
-	auto FocusPoint = GetFocalPoint();
-	if (FocusPoint != FAISystem::InvalidLocation)
+
+	// find focus with highest priority
+	for (int32 Index = FocusInformation.Priorities.Num() - 1; Index >= 0; --Index)
 	{
-		UE_VLOG_LOCATION(this, LogAI_Focus, VeryVerbose, FocusPoint, 12, FColor::Yellow,  TEXT("Focus"));
+		const FFocusKnowledge::FFocusItem& FocusItem = FocusInformation.Priorities[Index];
+		AActor* FocusActor = FocusItem.Actor.Get();
+		if (FocusActor)
+		{
+			UE_VLOG_LOCATION(this, LogAI_Focus, VeryVerbose, GetFocalPointOnActor(FocusActor), 12, FColor::Yellow,  TEXT("Focus %d. Actor %s "), Index, *FocusActor->GetName());
+		}
+		else if (FAISystem::IsValidLocation(FocusItem.Position))
+		{
+			UE_VLOG_LOCATION(this, LogAI_Focus, VeryVerbose, FocusItem.Position, 12, FColor::Yellow,  TEXT("Focus %d"), Index);
+		}
 	}
 #endif
 }

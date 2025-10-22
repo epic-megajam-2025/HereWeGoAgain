@@ -6,6 +6,7 @@
 #include "BTService_BehaviorEvaluator_Base.h"
 #include "BTService_BehaviorEvaluator_ChaseLaserPointer.generated.h"
 
+class UNpcComponent;
 class AAttentionTrigger;
 
 // #define LASER_POSITIONS_CONSIDERED_NUM 30
@@ -16,26 +17,6 @@ class HEREWEGOAGAIN_API UBTService_BehaviorEvaluator_ChaseLaserPointer : public 
 	GENERATED_BODY()
 
 private:
-	// struct FBTMemory_BehaviorEvaluator_ChaseLaserPointer : public FBTMemory_BehaviorEvaluator_Base
-	// {
-	// 	TWeakObjectPtr<AAttentionTrigger> CurrentlyTrackedLaserPointer;
-	// 	FVector PreviousLaserPositions[LASER_POSITIONS_CONSIDERED_NUM];
-	// 	int Head = 0;
-	// 	bool bStartFromTail = false;
-	//
-	// 	const FVector& operator[](int Index) const
-	// 	{
-	// 		const int ActualIndex = Index < 0 ? Index + LASER_POSITIONS_CONSIDERED_NUM : Index % LASER_POSITIONS_CONSIDERED_NUM;
-	// 		return PreviousLaserPositions[ActualIndex];
-	// 	}
-	//
-	// 	FVector& operator[](int Index)
-	// 	{
-	// 		const int ActualIndex = Index < 0 ? Index + LASER_POSITIONS_CONSIDERED_NUM : Index % LASER_POSITIONS_CONSIDERED_NUM;
-	// 		return PreviousLaserPositions[ActualIndex];
-	// 	}
-	// };
-
 	struct FBTMemory_BehaviorEvaluator_ChaseLaserPointer : public FBTMemory_BehaviorEvaluator_Base
 	{
 		TWeakObjectPtr<AAttentionTrigger> CurrentlyTrackedLaserPointer;
