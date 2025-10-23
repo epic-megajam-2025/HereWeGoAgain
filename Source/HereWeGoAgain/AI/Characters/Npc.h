@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "AI/Interfaces/NpcInterface.h"
+#include "Sound/SoundCue.h""
 #include "Characters/HWGABaseCharacter.h"
 #include "Npc.generated.h"
 
