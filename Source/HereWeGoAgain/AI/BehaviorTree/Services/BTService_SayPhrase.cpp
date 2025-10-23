@@ -14,6 +14,9 @@ UBTService_SayPhrase::UBTService_SayPhrase()
 void UBTService_SayPhrase::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+	if (PhrasesOptions.IsEmpty())
+		return;
+	
 	if (auto Npc = Cast<INpcInterface>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
 		const auto& TagsArray = PhrasesOptions.GetGameplayTagArray();
@@ -23,5 +26,5 @@ void UBTService_SayPhrase::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 FString UBTService_SayPhrase::GetStaticDescription() const
 {
-	return FString::Printf(TEXT("Say one of:\n%s\n%s"), *PhrasesOptions.ToString(), *Super::GetStaticDescription());
+	return FString::Printf(TEXT("Say one of:\n%s\n%s"), *PhrasesOptions.ToStringSimple(), *Super::GetStaticDescription());
 }

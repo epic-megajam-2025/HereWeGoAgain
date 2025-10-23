@@ -32,10 +32,10 @@ public:
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
-	void BP_StartPointingLaser(const FVector& PointingAt);
+	void BP_StartPointingLaser();
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void BP_StopPointingLaser(const FVector& PointingAt);
+	void BP_StopPointingLaser();
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void PointLaserAt(const FVector& PointingFrom, const FVector& PointingAt, const FVector& SurfaceNormal);

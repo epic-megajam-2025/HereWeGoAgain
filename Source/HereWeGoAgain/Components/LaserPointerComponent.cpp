@@ -28,6 +28,16 @@ void ULaserPointerComponent::SetLaserPointerActive(bool bActive)
 	SetComponentTickEnabled(bActive);
 	if (LaserPointerActor.IsValid())
 		LaserPointerActor->SetAttentionTriggerActive(bActive);
+
+	if (bActive)
+	{
+		PointLaser();
+		BP_StartPointingLaser();
+	}
+	else
+	{
+		BP_StopPointingLaser();
+	}
 }
 
 void ULaserPointerComponent::SetLaserPointerActor(AAttentionTrigger* NewLaserPointerActor)
