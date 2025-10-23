@@ -97,4 +97,5 @@ private:
 public: //IBehaviorEvaluator
 	virtual void InitiateBehaviorState(UBehaviorTreeComponent* BTComponent) const override;
 	virtual void FinalizeBehaviorState(UBehaviorTreeComponent* BTComponent) const override;
+	virtual void SetCooldown(UBehaviorTreeComponent* BTComponent, float Cooldown) const override;
 };

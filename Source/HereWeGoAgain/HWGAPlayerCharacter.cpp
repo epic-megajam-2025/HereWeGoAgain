@@ -47,6 +47,13 @@ AHWGAPlayerCharacter::AHWGAPlayerCharacter()
 	LaserPointerComponent = CreateDefaultSubobject<ULaserPointerComponent>(TEXT("LaserPointer"));
 }
 
+UAISense_Sight::EVisibilityResult AHWGAPlayerCharacter::CanBeSeenFrom(const FCanBeSeenFromContext& Context,
+	FVector& OutSeenLocation, int32& OutNumberOfLoSChecksPerformed, int32& OutNumberOfAsyncLosCheckRequested,
+	float& OutSightStrength, int32* UserData, const FOnPendingVisibilityQueryProcessedDelegate* Delegate)
+{
+	return UAISense_Sight::EVisibilityResult::NotVisible;
+}
+
 void AHWGAPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {	
 	// Set up action bindings

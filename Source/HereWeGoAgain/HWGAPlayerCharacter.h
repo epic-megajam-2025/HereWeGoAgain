@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "Perception/AISightTargetInterface.h"
 #include "HWGAPlayerCharacter.generated.h"
 
 class ULaserPointerComponent;
@@ -20,7 +21,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  A basic first person character
  */
 UCLASS(Blueprintable)
-class AHWGAPlayerCharacter : public ACharacter
+class AHWGAPlayerCharacter : public ACharacter, public IAISightTargetInterface
 {
 	GENERATED_BODY()
 
@@ -59,7 +60,10 @@ protected:
 	
 public:
 	AHWGAPlayerCharacter();
-
+	virtual UAISense_Sight::EVisibilityResult CanBeSeenFrom(const FCanBeSeenFromContext& Context, FVector& OutSeenLocation,
+		int32& OutNumberOfLoSChecksPerformed, int32& OutNumberOfAsyncLosCheckRequested,
+		float& OutSightStrength, int32* UserData = nullptr, const FOnPendingVisibilityQueryProcessedDelegate* Delegate = nullptr) override;
+	
 protected:
 
 	/** Called from Input Actions for movement input */

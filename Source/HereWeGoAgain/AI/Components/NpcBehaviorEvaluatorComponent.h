@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
+#include "AI/BehaviorTree/Tasks/BTTask_SetUtilityEvaluatorCooldown.h"
 #include "NpcBehaviorEvaluatorComponent.generated.h"
 
 class UNpcBlackboardKeysDataAsset;
@@ -32,6 +33,7 @@ public:
 	void RequestEvaluatorBlocked(const FGameplayTag& EvaluatorTag, float Duration);
 	
 	void Initialize(UBehaviorTreeComponent* InBTComponent, const UNpcBlackboardKeysDataAsset* InBlackboardKeys);
+	bool SetBehaviorEvaluatorCooldown(const FGameplayTag& EvaluatorTag, float Cooldown);
 
 protected:
 	virtual void BeginPlay() override;
