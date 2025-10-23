@@ -15,9 +15,10 @@ class HEREWEGOAGAIN_API UNpcComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	FORCEINLINE void SetTargetLocation(const FVector& NewTargetLocation) { CurrentTargetLocation = NewTargetLocation;  }
+	void SetTargetLocation(const FVector& NewTargetLocation, float TimeInterval);
+	void ClearTargetLocation();
 	FORCEINLINE const FVector& GetTargetLocation() const { return CurrentTargetLocation; };
-	FORCEINLINE void ClearTargetLocation() { CurrentTargetLocation = FAISystem::InvalidLocation; };
+	FORCEINLINE float GetTargetSpeed() const { return TargetSpeed; }
 	
 	FORCEINLINE void SetDistanceToTarget(float NewValue) { DistanceToTarget = NewValue; }
 	FORCEINLINE float GetDistanceToTarget() const { return DistanceToTarget; }
@@ -36,10 +37,11 @@ protected:
 	FRuntimeFloatCurve CatchUpSpeedDependencyCurve;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TMap<FGameplayTag, FGameplayAttribute> AttentionTriggerAttractionScales;	
-	
+	TMap<FGameplayTag, FGameplayAttribute> AttentionTriggerAttractionScales;
+
 private:
 	float DistanceToTarget = 0.f;
+	float TargetSpeed = 0.f;
 	FVector CurrentTargetLocation = FAISystem::InvalidLocation;
 	TMap<FGameplayTag, FVector> StoredLocations;
 	TMap<FGameplayTag, TWeakObjectPtr<AActor>> StoredActors;

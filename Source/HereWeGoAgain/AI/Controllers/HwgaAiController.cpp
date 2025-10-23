@@ -16,7 +16,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/HWGABaseCharacter.h"
 #include "Game/LogChannels.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Subsystems/WorldLocationSubsystem.h"
@@ -56,6 +55,7 @@ void AHwgaAiController::OnPossess(APawn* InPawn)
 	if (IsValid(BlackboardKeys))
 	{
 		NpcBehaviorEvaluatorComponent->Initialize(Cast<UBehaviorTreeComponent>(GetBrainComponent()), BlackboardKeys);
+		NpcBehaviorEvaluatorComponent->RequestEvaluatorsActive(InitiallyActiveBehaviorEvaluators, true);
 		
 		GetWorld()->GetTimerManager().SetTimerForNextTick([this]
 		{
@@ -69,7 +69,6 @@ void AHwgaAiController::OnPossess(APawn* InPawn)
 			if (IsValid(GameEndLocation) && !BlackboardKeys->EndLocationBBKey.SelectedKeyName.IsNone())
 				BlackboardComponent->SetValueAsVector(BlackboardKeys->EndLocationBBKey.SelectedKeyName, GameEndLocation->GetActorLocation());
 
-			NpcBehaviorEvaluatorComponent->RequestEvaluatorsActive(InitiallyActiveBehaviorEvaluators, true);
 		});
 	}
 }

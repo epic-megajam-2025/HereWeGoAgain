@@ -5,6 +5,18 @@
 #include "AbilitySystemComponent.h"
 #include "AIController.h"
 
+void UNpcComponent::SetTargetLocation(const FVector& NewTargetLocation, float TimeInterval)
+{
+	TargetSpeed = (CurrentTargetLocation - NewTargetLocation).Size() / TimeInterval;
+	CurrentTargetLocation = NewTargetLocation;
+}
+
+void UNpcComponent::ClearTargetLocation()
+{
+	CurrentTargetLocation = FAISystem::InvalidLocation;
+	TargetSpeed = 0.f;
+}
+
 void UNpcComponent::StoreTaggedLocation(const FGameplayTag& DataTag, const FVector& Vector)
 {
 	StoredLocations.FindOrAdd(DataTag) = Vector;

@@ -13,13 +13,13 @@ void UHWGACharacterMovementComponent::SetWalkSpeed(float NewValue)
 	if (NewValue > IncreaseDragAtMoveSpeedThreshold && !bIncreasedDrag)
 	{
 		// TODO (@red) adjust dragging properties
-		GroundFriction = 1.f;
+		GroundFriction = FastSpeedGroundFriction;
 		bIncreasedDrag = true;
 	}
 	else if (NewValue <= IncreaseDragAtMoveSpeedThreshold && bIncreasedDrag)
 	{
 		// TODO (@red) adjust dragging properties
-		GroundFriction = 8.f;
+		GroundFriction = SlowSpeedGroundFriction;
 		bIncreasedDrag = false;
 	}
 }

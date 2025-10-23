@@ -68,7 +68,7 @@ float UBTService_BehaviorEvaluator_Flee::UpdatePerception(UBehaviorTreeComponent
 			else if (AIStimulus.Type == SightSenseID)
 			{
 				auto BaseCharacter = Cast<AHWGABaseCharacter>(DataIt.Value().Target);
-				if (!BaseCharacter || Enemies.Contains(BaseCharacter->GetCharacterId()))
+				if (!BaseCharacter || !Enemies.Contains(BaseCharacter->GetCharacterId()))
 					continue;
 
 				float DistanceScale = 1.f;
