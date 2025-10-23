@@ -40,8 +40,11 @@ void UBTService_EvaluateDistanceToTarget::TickNode(UBehaviorTreeComponent& Owner
 
 	auto Target = Cast<AActor>(Blackboard->GetValueAsObject(TargetBBKey.SelectedKeyName));
 	if (Target == nullptr)
+	{
+		UE_VLOG(OwnerComp.GetAIOwner(), LogAI, Warning, TEXT("BTService_EvaluateDistanceToTarget: Target is not set"));
 		return;
-
+	}
+	
 	ENpcTargetDistanceEvaluation PreviousDistanceEvaluation = static_cast<ENpcTargetDistanceEvaluation>(Blackboard->GetValueAsEnum(OutEvaluatedTargetMoveDirectionBBKey.SelectedKeyName));
 	ENpcTargetDistanceEvaluation NewDistanceEvaluation = PreviousDistanceEvaluation;
 	float CurrentDistanceBehaviorDuration = 0.f;

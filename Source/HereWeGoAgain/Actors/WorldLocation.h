@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "WorldLocationBase.h"
 #include "GameFramework/Actor.h"
 #include "WorldLocation.generated.h"
 
-UCLASS()
-class HEREWEGOAGAIN_API AWorldLocation : public AActor
+UCLASS(Blueprintable)
+class HEREWEGOAGAIN_API AWorldLocation : public AWorldLocationBase
 {
 	GENERATED_BODY()
 

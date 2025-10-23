@@ -23,9 +23,12 @@ float UUpdateSpeedToCatchTargetMMC::CalculateBaseMagnitude_Implementation(const 
 	const FVector& CatchUpTargetLocation = NpcComponent->GetTargetLocation();
 	if (CatchUpTargetLocation == FAISystem::InvalidLocation)
 		return FallbackSpeed;
-
+	
 	if (auto SpeedDependency = NpcComponent->GetCatchUpSpeedDependencyCurve())
-		return SpeedDependency->Eval((InstigatorActor->GetActorLocation() - CatchUpTargetLocation).Size());
+	{
+		float PredictionDistance = (InstigatorActor->GetActorLocation() - CatchUpTargetLocation).Size() + NpcComponent->GetTargetSpeed() * Spec.GetPeriod();
+		return SpeedDependency->Eval(PredictionDistance);
+	}
 	
 	return FallbackSpeed;
 }

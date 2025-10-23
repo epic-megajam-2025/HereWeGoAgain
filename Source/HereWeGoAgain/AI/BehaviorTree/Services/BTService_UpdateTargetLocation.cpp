@@ -34,7 +34,7 @@ void UBTService_UpdateTargetLocation::TickNode(UBehaviorTreeComponent& OwnerComp
 		return;
 	}
 
-	NpcComponent->SetTargetLocation(Target->GetActorLocation());
+	NpcComponent->SetTargetLocation(Target->GetActorLocation(), DeltaSeconds);
 	Blackboard->SetValueAsVector(OutTargetLocationBBKey.SelectedKeyName, Target->GetActorLocation());
 }
 

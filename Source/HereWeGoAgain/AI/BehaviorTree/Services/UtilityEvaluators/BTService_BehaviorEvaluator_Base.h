@@ -80,6 +80,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FBehaviorEvaluatorBlockRequest> BlockEvaluatorsWhenActivated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float UpdateCooldownOnActivation = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float UpdateCooldownOnDeactivation = 0.f;
 	
 	void ChangeUtility(const float DeltaUtilityRaw, UBlackboardComponent* Blackboard, float DeltaTime, const FBTMemory_BehaviorEvaluator_Base*
 	                   BTMemory);

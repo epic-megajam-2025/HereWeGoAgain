@@ -9,7 +9,7 @@
 
 class AAttentionTrigger;
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class HEREWEGOAGAIN_API ULaserPointerComponent : public UActorComponent
 {
 	GENERATED_BODY()

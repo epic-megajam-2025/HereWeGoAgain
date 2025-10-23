@@ -146,8 +146,11 @@ void UBTService_BehaviorEvaluator_Base::InitiateBehaviorState(UBehaviorTreeCompo
 	if (!IndefinitelyBlockedEvaluators.IsEmpty())
 		BehaviorEvaluatorComponent->RequestEvaluatorsBlocked(IndefinitelyBlockedEvaluators, true);
 
-	auto BTMemory = reinterpret_cast<FBTMemory_BehaviorEvaluator_Base*>(BTComponent->GetNodeMemory(this, BTComponent->FindInstanceContainingNode(this)));
+	auto NodeMemory = BTComponent->GetNodeMemory(this, BTComponent->FindInstanceContainingNode(this));
+	auto BTMemory = reinterpret_cast<FBTMemory_BehaviorEvaluator_Base*>(NodeMemory);
 	BTMemory->bActive = true;
+	if (UpdateCooldownOnActivation > 0.f)
+		SetNextTickTime(NodeMemory, UpdateCooldownOnActivation);
 }
 
 void UBTService_BehaviorEvaluator_Base::FinalizeBehaviorState(UBehaviorTreeComponent* BTComponent) const
@@ -162,8 +165,11 @@ void UBTService_BehaviorEvaluator_Base::FinalizeBehaviorState(UBehaviorTreeCompo
 	if (!IndefinitelyBlockedEvaluators.IsEmpty())
 		BehaviorEvaluatorComponent->RequestEvaluatorsBlocked(IndefinitelyBlockedEvaluators, false);
 
-	auto BTMemory = reinterpret_cast<FBTMemory_BehaviorEvaluator_Base*>(BTComponent->GetNodeMemory(this, BTComponent->FindInstanceContainingNode(this)));
+	auto NodeMemory = BTComponent->GetNodeMemory(this, BTComponent->FindInstanceContainingNode(this));
+	auto BTMemory = reinterpret_cast<FBTMemory_BehaviorEvaluator_Base*>(NodeMemory);
 	BTMemory->bActive = false;
+	if (UpdateCooldownOnDeactivation > 0.f)
+		SetNextTickTime(NodeMemory, UpdateCooldownOnDeactivation);
 }
 
 void UBTService_BehaviorEvaluator_Base::InitializeFromAsset(UBehaviorTree& Asset)
@@ -178,7 +184,14 @@ void UBTService_BehaviorEvaluator_Base::InitializeFromAsset(UBehaviorTree& Asset
 
 FString UBTService_BehaviorEvaluator_Base::GetStaticDescription() const
 {
-	return FString::Printf(TEXT("Utility BB: %s\nAccumulate rate: %s\nBase: %s\nEvaluator id: %s\nActive evaluators BB: %s\n%s"),
+	FString UpdateCooldownsDetails = "";
+	if (UpdateCooldownOnActivation > 0.f)
+		UpdateCooldownsDetails += FString::Printf(TEXT("\nUpdate cooldown on activation: %.2f"), UpdateCooldownOnActivation);
+
+	if (UpdateCooldownOnDeactivation > 0.f)
+		UpdateCooldownsDetails += FString::Printf(TEXT("\nUpdate cooldown on deactivation: %.2f"), UpdateCooldownOnDeactivation);
+	
+	return FString::Printf(TEXT("Utility BB: %s\nAccumulate rate: %s\nBase: %s\nEvaluator id: %s\nActive evaluators BB: %s%s\n%s"),
 		*UtilityBBKey.SelectedKeyName.ToString(), *InactiveUtilityAccumulationRate.ToString(), *InactiveUtilityRegressionOffset.ToString(),
-		*BehaviorEvaluatorTag.ToString(), *ActiveEvaluatorsTagsBBKey.SelectedKeyName.ToString(), *Super::GetStaticDescription());
+		*BehaviorEvaluatorTag.ToString(), *ActiveEvaluatorsTagsBBKey.SelectedKeyName.ToString(), *UpdateCooldownsDetails, *Super::GetStaticDescription());
 }

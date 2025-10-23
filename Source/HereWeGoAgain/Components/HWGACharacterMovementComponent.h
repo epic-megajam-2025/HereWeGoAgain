@@ -29,6 +29,12 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float IncreaseDragAtMoveSpeedThreshold = 450.f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float SlowSpeedGroundFriction = 8.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float FastSpeedGroundFriction = 1.f;
 
 private:
 	bool bIncreasedDrag = false;
