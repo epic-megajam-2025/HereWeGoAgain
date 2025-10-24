@@ -36,6 +36,12 @@ void ULaserPointerComponent::SetLaserPointerActive(bool bActive)
 	}
 	else
 	{
+		// putting laser pointer actor away because AI perception auto successive range seems to NOT age the laser pointer actor after it stopped moving
+		// and hence it's never forgotten which introduces errors in AI logic
+		// upd: tried it. bad idea. cat doesn't instantly lose sense of the laser pointer due to how BTs work,
+		// so for some moment the cat "perceives" the laser pointer high above players head which also looks ugly.
+		// guess i just have to handle edge case of losing laser pointer without relying on auto success range feature of AI perception component
+		// LaserPointerActor->SetActorLocation(GetOwner()->GetActorLocation() + FVector::UpVector * 10000.f);
 		BP_StopPointingLaser();
 	}
 }

@@ -3,6 +3,8 @@
 
 #include "LaserPointerActor.h"
 
+#include "Game/LogChannels.h"
+
 ALaserPointerActor::ALaserPointerActor()
 {
 	// for (int i = -3; i < 3; i++)
@@ -18,6 +20,7 @@ UAISense_Sight::EVisibilityResult ALaserPointerActor::CanBeSeenFrom(const FCanBe
 	if (!bAttentionTriggerActive)
 	{
 		OutSightStrength = 0.f;
+		UE_VLOG(this, LogAI_Perception, Verbose, TEXT("Can't see me because inactive"));
 		return UAISense_Sight::EVisibilityResult::NotVisible;
 	}
 	
@@ -35,9 +38,11 @@ UAISense_Sight::EVisibilityResult ALaserPointerActor::CanBeSeenFrom(const FCanBe
 		{
 			OutSeenLocation = TraceEnd;
 			OutSightStrength = 1.f;
+			UE_VLOG(this, LogAI_Perception, Verbose, TEXT("observer can see me"));
 			return UAISense_Sight::EVisibilityResult::Visible;
 		}
 	}
 
+	UE_VLOG(this, LogAI_Perception, Verbose, TEXT("observer could not see me"));
 	return UAISense_Sight::EVisibilityResult::NotVisible;
 }

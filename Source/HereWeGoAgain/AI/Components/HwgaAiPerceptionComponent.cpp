@@ -4,6 +4,7 @@
 #include "HwgaAiPerceptionComponent.h"
 
 #include "AIController.h"
+#include "Game/LogChannels.h"
 #include "Perception/AISense_Damage.h"
 #include "Perception/AISense_Sight.h"
 
@@ -50,8 +51,13 @@ void UHwgaAiPerceptionComponent::TickComponent(float DeltaTime, ELevelTick TickT
         TArray<AActor*> CurrentlySeenActors;
         GetCurrentlyPerceivedActors(UAISense_Sight::StaticClass(), CurrentlySeenActors);
         for (auto& ActorMemory : ActorsObservationTime)
+        {
             if (ActorMemory.Key.IsValid() && CurrentlySeenActors.Contains(ActorMemory.Key.Get()))
+            {
                 ActorMemory.Value += DeltaTime;
+                UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("Incrementing time seen %s. Total time: %.2f"), *ActorMemory.Key->GetName(), ActorMemory.Value);
+            }
+        }
     }
 }
 
@@ -81,29 +87,49 @@ float UHwgaAiPerceptionComponent::GetAccumulatedDamage() const
 
 void UHwgaAiPerceptionComponent::OnTargetPerceptionInfoUpdatedHandler(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
+#if WITH_EDITOR
+    UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("UHwgaAiPerceptionComponent::OnTargetPerceptionInfoUpdatedHandler"));
+    UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("Stimulus:\n%s"), *UpdateInfo.Stimulus.GetDebugDescription());
+#endif
+    
     if (UpdateInfo.Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
     {
         if (UpdateInfo.Stimulus.Strength > 0.f && UpdateInfo.Stimulus.WasSuccessfullySensed())
         {
             if (!ActorsObservationTime.Contains(UpdateInfo.Target))
+            {
+                UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("OnTargetPerceptionInfoUpdatedHandler: adding first time seen actor %s"), *UpdateInfo.Target->GetName());
                 ActorsObservationTime.Add(UpdateInfo.Target, 0.f);
-            
+            }
+
+            UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("OnTargetPerceptionInfoUpdatedHandler: actor %s seen not for the first time"), *UpdateInfo.Target->GetName());
             // auto& ActorMemory = ActorsMemory.FindOrAdd(UpdateInfo.Target);
             // ActorMemory.TimeSeen = 0.f;
         }
         else if (UpdateInfo.Stimulus.IsExpired())
         {
+            UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("OnTargetPerceptionInfoUpdatedHandler: actor %s sight is expired"), *UpdateInfo.Target->GetName());
             ActorsObservationTime.Remove(UpdateInfo.Target);
+        }
+        else
+        {
+            int x = 1;
+            UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("OnTargetPerceptionInfoUpdatedHandler: weird perception update for actor %s"), *UpdateInfo.Target->GetName());
         }
     }
 }
 
 void UHwgaAiPerceptionComponent::OnTargetPerceptionForgottenHandler(AActor* Actor)
 {
+    UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("Forgot actor %s"), *Actor->GetName());
     ActorsObservationTime.Remove(Actor);
 }
 
 void UHwgaAiPerceptionComponent::OnTargetPerceptionUpdatedHandler(AActor* Actor, FAIStimulus Stimulus)
 {
+#if WITH_EDITOR
+    UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("OnTargetPerceptionUpdatedHandler. actor %s"), *Actor->GetName());
+    UE_VLOG(GetOwner(), LogAI_Perception, VeryVerbose, TEXT("Stimulus:\n%s"), *Stimulus.GetDebugDescription());
+#endif
     TargetPerceptionUpdatedNativeEvent.Broadcast(Actor, Stimulus);
 }
