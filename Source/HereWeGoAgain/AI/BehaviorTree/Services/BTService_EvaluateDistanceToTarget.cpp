@@ -89,7 +89,9 @@ void UBTService_EvaluateDistanceToTarget::TickNode(UBehaviorTreeComponent& Owner
 			 NewDistance = PathFindingResult.Path->GetLength();
 
 			if (PathFindingResult.Result == ENavigationQueryResult::Type::Fail)
+			{
 				UE_VLOG(OwnerComp.GetAIOwner(), LogAI, Warning, TEXT("BTService_EvaluateDistanceToTarget: Can't find path to target"));
+			}
 		}
 	}
 	else
