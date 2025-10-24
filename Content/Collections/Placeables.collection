@@ -1,0 +1,10 @@
+FileVersion:2
+Type:Static
+Guid:6AAFA21D-49ED-9A08-F4E7-2AA477B323E6
+ParentGuid:00000000-0000-0000-0000-000000000000
+
+/Game/HereWeGoAgain/Actors/BP_LoudThing.BP_LoudThing
+/Game/HereWeGoAgain/Actors/BP_WorldLocation.BP_WorldLocation
+/Game/HereWeGoAgain/Actors/PhysicsObjects/BP_CardboardBox.BP_CardboardBox
+/Game/HereWeGoAgain/Actors/PhysicsObjects/BP_KnockableObject.BP_KnockableObject
+/Game/HereWeGoAgain/AI/Characters/Chicken/BP_Npc_Chicken.BP_Npc_Chicken
